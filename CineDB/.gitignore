@@ -1,0 +1,27 @@
+# Compilados
+*.class
+
+# Carpetas de build
+/build/
+/dist/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/nbactions.xml
+
+# Logs
+*.log
+
+# Temporales
+*.tmp
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/
