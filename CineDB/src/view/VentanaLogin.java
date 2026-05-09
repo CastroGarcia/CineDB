@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -24,6 +25,14 @@ public class VentanaLogin extends JFrame{
     public VentanaLogin(){
         configFrame();
         initComponents();
+    }
+    
+    public String getTxtUsuario() {
+        return txtUsuario.getText();
+    }
+    
+    public String getTxtContraseña() {
+        return txtContraseña.getText();
     }
     
     private void configFrame() {
@@ -138,4 +147,8 @@ public class VentanaLogin extends JFrame{
         return campo;
     }
     
+    public void showAlert(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }    
+   
 }
