@@ -1,4 +1,4 @@
-package models;
+package models.DataAccessObjects;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +19,7 @@ public class UserDAO {
     public int registerUser() {
         if(findUser()) return 1; //Usuario ya registrado
         
-        String sql = "INSERT INTO usuarios (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO usuario (NombreUsuario, Contraseña) VALUES (?, ?)";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)) {
 
@@ -28,7 +28,7 @@ public class UserDAO {
 
             ps.executeUpdate();
             System.out.println("Usuario guardado");
-            return 1;   //Usuario registrado
+            return 2;   //Usuario registrado
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class UserDAO {
     
     public boolean findUser() {
         boolean valid = false;
-        String sql = "SELECT * FROM usuarios WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM usuario WHERE NombreUsuario = ? AND Contraseña = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)) {
 
