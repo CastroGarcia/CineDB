@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,13 +15,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class VentanaLogin extends JFrame{
     private JPanel panelCentral;
     public JButton btnIniciarSesion, btnRegistrar;
-    public JTextField txtUsuario, txtContraseña;
+    public JTextField txtUsuario;
+    public JPasswordField txtContraseña;
     
     public VentanaLogin(){
         configFrame();
@@ -38,8 +41,8 @@ public class VentanaLogin extends JFrame{
     private void configFrame() {
         setLayout(new BorderLayout());
         setTitle("Inicio de sesion");
-        setSize(400, 550);
-        //setIconImage(new ImageIcon("URL").getImage());
+        setSize(400, 700);
+        setIconImage(new ImageIcon(getClass().getResource("/resources/usuario.png")).getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);                     
@@ -60,20 +63,26 @@ public class VentanaLogin extends JFrame{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 5, 10, 5);
         
+        // Label Imagen
+        JLabel imagen = new JLabel(new ImageIcon(getClass().getResource("/resources/usuario.png")));        
+        gbc.gridy = 0; gbc.gridx = 0;
+        gbc.gridwidth = 2;                          
+        p.add(imagen, gbc);
+        
         // Label Titulo
         JLabel titulo = new JLabel("Login Cine", SwingConstants.CENTER);
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titulo.setBorder(BorderFactory.createEmptyBorder(40, 0, 40, 0));
+        titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 40, 0));
         //titulo.setOpaque(true);
         //titulo.setBackground(Color.green);
-        gbc.gridx = 0; gbc.gridy = 0;               
+        gbc.gridy = 1; gbc.gridx = 0;
         gbc.gridwidth = 2;                          
         gbc.weightx = 1.0;                          // La celda ocupa todo el ancho
         gbc.fill = GridBagConstraints.HORIZONTAL;   // El JLabel se estira
         p.add(titulo, gbc);
         
         // Label Usuario
-        gbc.gridy = 1; gbc.gridx = 0;             // Posicion
+        gbc.gridy = 2; gbc.gridx = 0;             // Posicion
         gbc.anchor = GridBagConstraints.WEST;     // Donde se posiciona el componente en la celda
         gbc.fill = GridBagConstraints.NONE;       //Como se llena el espacio disponible        
         gbc.gridwidth = 1;                        // Celdas que ocupa el componente
@@ -81,23 +90,23 @@ public class VentanaLogin extends JFrame{
         p.add(crearLabel("Usuario: "), gbc);
         
         // Label Contraseña
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         p.add(crearLabel("Contraseña: "), gbc);
         
         // TextField Usuario
-        gbc.gridy = 1; gbc.gridx = 1;
+        gbc.gridy = 2; gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         txtUsuario = crearCampo(150);
         p.add(txtUsuario, gbc);
         
         // TextField Contraseña
-        gbc.gridy = 2;
-        txtContraseña = crearCampo(150);
+        gbc.gridy = 3;
+        txtContraseña = crearCampoContraseña(150);
         p.add(txtContraseña, gbc);
         
         // Boton IniciarSesion
-        gbc.gridy = 3; gbc.gridx = 0;
+        gbc.gridy = 4; gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -106,13 +115,13 @@ public class VentanaLogin extends JFrame{
         p.add(btnIniciarSesion, gbc);
         
         // Boton Registrarse
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         btnRegistrar = crearBoton("Registrarse");
         p.add(btnRegistrar, gbc);        
         
-        // 🔥 FILA FANTASMA (LA CLAVE)
+        // FILA FANTASMA (EMPUJA LOS COMPONENTES HACIA ARRIBA)
         gbc.gridx = 0;
-        gbc.gridy = 5;          // fila después de todo
+        gbc.gridy = 6;          // fila después de todo
         gbc.gridwidth = 2;
         gbc.weighty = 1.0;      // 👈 esto empuja TODO hacia arriba
         gbc.fill = GridBagConstraints.VERTICAL;
@@ -125,7 +134,11 @@ public class VentanaLogin extends JFrame{
     // Helpers construccion
     private JButton crearBoton(String texto) {
         JButton b = new JButton(texto);
-        b.setBackground(new Color(200, 200, 200));
+        b.setPreferredSize(new Dimension(200, 40));
+        b.setMinimumSize(new Dimension(200, 40));
+        b.setMaximumSize(new Dimension(200, 40));
+        b.setBackground(Color.black);
+        b.setForeground(Color.white);
         b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         b.setBorderPainted(false);
         b.setFocusPainted(false);
@@ -142,6 +155,13 @@ public class VentanaLogin extends JFrame{
     
     private JTextField crearCampo(int length) {
         JTextField campo = new JTextField(length);
+        campo.setCaretColor(Color.ORANGE);
+        
+        return campo;
+    }
+    
+    private JPasswordField crearCampoContraseña(int length) {
+        JPasswordField campo = new JPasswordField(length);
         campo.setCaretColor(Color.ORANGE);
         
         return campo;

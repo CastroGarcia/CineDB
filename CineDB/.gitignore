@@ -10,6 +10,8 @@
 /nbbuild/
 /nbdist/
 /nbactions.xml
+CineDB/nbproject/build-impl.xml
+CineDB/nbproject/genfiles.properties
 
 # Logs
 *.log
