@@ -10,6 +10,9 @@
 /nbbuild/
 /nbdist/
 /nbactions.xml
+/nbproject/build-impl.xml
+/nbproject/genfiles.properties
+/nbproject/project.properties
 
 # Logs
 *.log
