@@ -1,29 +1,42 @@
-# Compilados
+# ========================
+# Compilados Java
+# ========================
 *.class
+*.jar
+*.war
 
-# Carpetas de build
-/build/
-/dist/
+# ========================
+# Carpetas de build (NetBeans)
+# ========================
+build/
+dist/
+nbbuild/
+nbdist/
 
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/nbdist/
-/nbactions.xml
-CineDB/nbproject/build-impl.xml
-CineDB/nbproject/genfiles.properties
+# ========================
+# NetBeans - archivos generados automáticamente
+# ========================
+nbproject/private/
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbactions.xml
+manifest.mf
 
-# Logs
+# ========================
+# Logs y temporales
+# ========================
 *.log
-
-# Temporales
 *.tmp
 
-# Sistema
+# ========================
+# Sistema operativo
+# ========================
 .DS_Store
 Thumbs.db
 
+# ========================
 # IDEs
+# ========================
 .idea/
 *.iml
 .vscode/

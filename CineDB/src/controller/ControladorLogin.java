@@ -2,6 +2,8 @@ package controller;
 
 import java.sql.Connection;
 import database.ConexionDB;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import models.DataAccessObjects.UserDAO;
 import view.VentanaInicio;
@@ -27,16 +29,7 @@ public class ControladorLogin {
         
         // Boton iniciarSesion
         view.btnIniciarSesion.addActionListener(e -> {
-            UserDAO user = instanceUser();
-            
-            if(loginAction(user)) {
-                VentanaInicio homeView = new VentanaInicio();
-                new ControladorInicio(homeView);
-                homeView.setVisible(true);
-                view.dispose();
-            } else {
-                showAlert("Usuario no encontrado");
-            }
+            tryLogin();
         });
         
         // Boton registrarse
@@ -44,6 +37,40 @@ public class ControladorLogin {
             UserDAO user = instanceUser();
             registerAction(user);            
         });
+        
+        //----- VK del teclado -----------------------------
+        view.txtUsuario.addKeyListener(new KeyAdapter() {
+           @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tryLogin();
+                }                
+            } 
+        });
+        
+        view.txtContraseña.addKeyListener(new KeyAdapter() {
+           @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tryLogin();
+                }                
+            } 
+        });                
+    }
+    
+    //----- Metodos para sesion ------------------------------
+    
+    private void tryLogin() {
+        UserDAO user = instanceUser();
+            
+        if(loginAction(user)) {
+            VentanaInicio homeView = new VentanaInicio();
+            new ControladorInicio(homeView);
+            homeView.setVisible(true);
+            view.dispose();
+        } else {
+            showAlert("Usuario no encontrado");
+        }
     }
     
     private UserDAO instanceUser() {

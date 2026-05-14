@@ -1,9 +1,11 @@
 package models;
 
 public class Movie {
+    private int id;
     private String name, genre, duration, format, language;
     
     public Movie() {
+        id = 0;
         name = "";
         genre = "";
         duration = "";
@@ -11,6 +13,16 @@ public class Movie {
         language = "";
     }
     
+    public Movie(int id, String name, String genre, String duration, String format, String language) {
+        this.id = id;
+        setName(name);
+        setGenre(genre);
+        setDuration(duration);
+        setFormat(format);
+        setLanguage(language);
+    }
+    
+    // Constructor sin id (para cuando registras una nueva)
     public Movie(String name, String genre, String duration, String format, String language) {
         setName(name);
         setGenre(genre);
@@ -19,6 +31,14 @@ public class Movie {
         setLanguage(language);
     }
 
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getName() {
         return name;
     }

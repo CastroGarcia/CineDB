@@ -2,11 +2,16 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -20,7 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class VentanaLogin extends JFrame{
-    private JPanel panelCentral;
+    public JPanel panelLogin;
     public JButton btnIniciarSesion, btnRegistrar;
     public JTextField txtUsuario;
     public JPasswordField txtContraseña;
@@ -50,11 +55,11 @@ public class VentanaLogin extends JFrame{
     
     private void initComponents() {
         // Construimos interfaz
-        panelCentral = crearPanelCentral();                       
-        add(panelCentral);
+        panelLogin = crearPanelLogin();                       
+        add(panelLogin);
     }
     
-    private JPanel crearPanelCentral() {
+    private JPanel crearPanelLogin() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(new Color(245, 245, 245));
         //p.setBackground(Color.red);
@@ -142,27 +147,76 @@ public class VentanaLogin extends JFrame{
         b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         b.setBorderPainted(false);
         b.setFocusPainted(false);
+        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        b.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                b.setBackground(Color.gray);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                b.setBackground(Color.black);
+            }            
+        });
         
         return b;
     }
     
     private JLabel crearLabel(String texto) {
         JLabel l = new JLabel(texto);
-        l.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        l.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         
         return l;
     }
     
     private JTextField crearCampo(int length) {
-        JTextField campo = new JTextField(length);
-        campo.setCaretColor(Color.ORANGE);
+        JTextField campo = new JTextField(" Nombre de Usuario", length);
+        campo.setForeground(Color.gray);        
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        
+        campo.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (campo.getText().equals(" Nombre de Usuario")) {
+                    campo.setText("");
+                    campo.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (campo.getText().isEmpty()) {
+                    campo.setText(" Nombre de Usuario");
+                    campo.setForeground(Color.GRAY);
+                }
+            }
+        });
         
         return campo;
     }
     
     private JPasswordField crearCampoContraseña(int length) {
-        JPasswordField campo = new JPasswordField(length);
-        campo.setCaretColor(Color.ORANGE);
+        JPasswordField campo = new JPasswordField(" Contraseña", length);
+        campo.setForeground(Color.gray);
+        campo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        
+        campo.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (campo.getText().equals(" Contraseña")) {
+                    campo.setText("");
+                    campo.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (campo.getText().isEmpty()) {
+                    campo.setText(" Contraseña");
+                    campo.setForeground(Color.GRAY);
+                }
+            }
+        });
         
         return campo;
     }
