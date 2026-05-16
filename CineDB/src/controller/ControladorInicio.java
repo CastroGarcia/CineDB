@@ -20,6 +20,7 @@ public class ControladorInicio {
         
         initController();                        
         new ControladorPeliculas(conn, view.panelPeliculas);
+        new ControladorClientes(conn, view.panelClientes);
     }
     
     private void initController() {
