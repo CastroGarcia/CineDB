@@ -10,31 +10,28 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
 public class VentanaInicio extends JFrame{    
     public PanelClientes panelClientes;
     public PanelPeliculas panelPeliculas;
+    public PanelMembresias panelMembresias;
     public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
     public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera, 
-            btnSalas, btnVender, btnSalir, btnCrear, btnLeer, btnActualizar, 
-            btnEliminar;
+            btnSalas, btnMembresias, btnVender, btnSalir, btnCrear, btnLeer, 
+            btnActualizar, btnEliminar;
     public JLabel lblTitulo;
     public JTextField txt1;
     public CardLayout card;
@@ -97,6 +94,7 @@ public class VentanaInicio extends JFrame{
         btnFunciones = crearBotonSideBar("Funciones", "tiempo-de-la-funcion.png");
         btnCartelera = crearBotonSideBar("Carteleras", "pelicula.png");
         btnSalas = crearBotonSideBar("Sala", "cine.png");
+        btnMembresias = crearBotonSideBar("Membresias", "anadir-contacto.png");
         btnVender = crearBotonSideBar("Vender", "entradas.png");
         btnSalir = crearBotonSideBar("Salir", "salida.png");
         
@@ -105,11 +103,13 @@ public class VentanaInicio extends JFrame{
         p.add(btnFunciones);
         p.add(btnCartelera);
         p.add(btnSalas);
+        p.add(btnMembresias);
         p.add(btnVender);
-        p.add(Box.createVerticalStrut(260));
+        p.add(Box.createVerticalStrut(213));
         JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-        //separator.setForeground(Color.white);
+        separator.setForeground(Color.white);
         p.add(separator);       
+        p.add(Box.createVerticalStrut(8));
         p.add(btnSalir);
         
         return p;        
@@ -121,9 +121,11 @@ public class VentanaInicio extends JFrame{
         // PANELES
         panelClientes = new PanelClientes();
         panelPeliculas = new PanelPeliculas();
+        panelMembresias = new PanelMembresias();
         
         p.add(panelClientes, "CLIENTES");
         p.add(panelPeliculas, "PELICULAS");
+        p.add(panelMembresias, "MEMBRESIAS");
         
         card.show(p, "CLIENTES"); // Panel a mostrar por defecto
         
@@ -166,13 +168,6 @@ public class VentanaInicio extends JFrame{
         lbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         
         return lbl;
-    }
-    
-    private JTextField crearCampo(int length) {
-        JTextField campo = new JTextField(length);
-        campo.setCaretColor(Color.ORANGE);
-        
-        return campo;
     }
     
     //----- Metodos auxiliares -------------------------------------

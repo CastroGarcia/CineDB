@@ -3,6 +3,7 @@ package models.DataAccessObjects;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAO {
     
@@ -19,12 +20,15 @@ public class UserDAO {
     public int registerUser() {
         if(findUser()) return 1; //Usuario ya registrado
         
+        // Hashea la contraseña (el "10" es el factor de costo)
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
+        
         String sql = "INSERT INTO usuario (NombreUsuario, Contraseña) VALUES (?, ?)";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, username);  
-            ps.setString(2, password);
+            ps.setString(2, hashedPassword);
 
             ps.executeUpdate();
             System.out.println("Usuario guardado");
@@ -36,26 +40,27 @@ public class UserDAO {
         }
     }
     
-    public boolean findUser() {
-        boolean valid = false;
-        String sql = "SELECT * FROM usuario WHERE NombreUsuario = ? AND Contraseña = ?";
+    public boolean findUser() {        
+        // Solo busca por username, trae el hash guardado
+        String sql = "SELECT Contraseña FROM usuario WHERE NombreUsuario = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)) {
-
+            
             ps.setString(1, username);
-            ps.setString(2, password);
-
+            
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()) {
-                valid = true;
+                String hashGuardado = rs.getString("Contraseña");
+                // Compara la contraseña escrita contra el hash guardado
+                return BCrypt.checkpw(password, hashGuardado);
             }
 
         } catch(Exception e) {
             e.printStackTrace();
             return false;
         }
-
-        return valid;
+        
+        return false;
     }
 }
