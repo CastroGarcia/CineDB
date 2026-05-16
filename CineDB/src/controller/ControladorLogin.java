@@ -2,6 +2,8 @@ package controller;
 
 import java.sql.Connection;
 import database.ConexionDB;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import models.DataAccessObjects.UserDAO;
 import view.VentanaInicio;
@@ -27,29 +29,83 @@ public class ControladorLogin {
         
         // Boton iniciarSesion
         view.btnIniciarSesion.addActionListener(e -> {
-            UserDAO user = instanceUser();
-            
-            if(loginAction(user)) {
-                VentanaInicio homeView = new VentanaInicio();
-                new ControladorInicio(homeView);
-                homeView.setVisible(true);
-                view.dispose();
-            } else {
-                showAlert("Usuario no encontrado");
-            }
+            tryLogin();
         });
         
         // Boton registrarse
-        view.btnRegistrar.addActionListener(e -> {
-            UserDAO user = instanceUser();
-            registerAction(user);            
+        view.btnRegistrar.addActionListener(e -> {            
+            view.card.show(view.getContentPane(), "REGISTRAR");
+            view.limpiarCamposLogin();
         });
+        
+        // Boton Crear Usuario
+        view.btnCrearUsuario.addActionListener(e -> {
+            String username = view.getTxtNuevoUsuario();
+            String password = view.getTxtNuevaContraseña();
+            String confirmPassword = view.getTxtConfirmarContraseña();
+            
+            if(camposVaciosRegistro(username, password, confirmPassword)) return;
+            
+            if(!password.equals(confirmPassword)) {
+                showAlert("Las contraseñas no coinciden.");
+                return;
+            }
+            UserDAO user = instanceNewUser(username, password);
+            registerAction(user);  
+            view.card.show(view.getContentPane(), "LOGIN");
+            view.limpiarCamposRegistro();
+        });
+        
+        // Boton Cancelar
+        view.btnCancelar.addActionListener(e -> {
+            view.limpiarCamposRegistro();
+            view.card.show(view.getContentPane(), "LOGIN");
+        });
+        
+        //----- VK del teclado -----------------------------
+        view.txtUsuario.addKeyListener(new KeyAdapter() {
+           @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tryLogin();
+                }                
+            } 
+        });
+        
+        view.txtContraseña.addKeyListener(new KeyAdapter() {
+           @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    tryLogin();
+                }                
+            } 
+        });                
+    }
+    
+    //----- Metodos para sesion ------------------------------
+    
+    private void tryLogin() {
+        UserDAO user = instanceUser();
+            
+        if(loginAction(user)) {
+            VentanaInicio homeView = new VentanaInicio();
+            new ControladorInicio(homeView);
+            homeView.setVisible(true);
+            view.dispose();
+        } else {
+            showAlert("Usuario no encontrado");
+            view.limpiarCamposLogin();
+        }
     }
     
     private UserDAO instanceUser() {
         String username = view.getTxtUsuario();
         String password = view.getTxtContraseña();
         
+        return new UserDAO(conn, username, password);
+    }
+    
+    private UserDAO instanceNewUser(String username, String password) {           
         return new UserDAO(conn, username, password);
     }
     
@@ -72,4 +128,16 @@ public class ControladorLogin {
     private void showAlert(String message) {
         view.showAlert(message);
     }
+    
+    private boolean camposVaciosRegistro(String user, String pass, 
+            String confirmPass) {
+        if(user.equals("Escribe un nombre de usuario") 
+                || pass.equals("Escribe tu contraseña") 
+                || confirmPass.equals("Escribe la contraseña")) {
+            showAlert("Debes llenar todos los campos.");
+            return true;
+        }
+        return false;
+    }
+    
 }

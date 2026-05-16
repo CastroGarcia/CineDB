@@ -25,23 +25,23 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
-import models.Client;
+import models.Movie;
 
-public class PanelClientes extends JPanel{
+public class PanelPeliculas extends JPanel{
     private JPanel panelPrincipal, panelRegistrar, panelBuscar;
-    public DefaultTableModel dtmClientes;
-    public JTable tablaClientes, tablaBuscar;
+    public DefaultTableModel dtmPeliculas;
+    public JTable tablaPeliculas, tablaBuscar;
     private JScrollPane spPrincipal, spBuscar;
     public JButton btnCrear, btnLeer, btnActualizar, btnEliminar, btnGuardar, 
             btnCancelar, btnBuscar, btnRegresar;
-    public JTextField txtNombre, txtEdad, txtTelefono, txtCorreo, 
-            txtIdMembership, txtBuscador;
+    public JTextField txtNombre, txtGenero, txtDuracion, txtFormato, txtIdioma,
+            txtBuscador;
     public CardLayout card;
     public JLabel lblTituloPanelAgregar;
-    String[] cols = { "ID", "Nombre", "Edad", "Telefono", "Correo", "ID_Membresia"};
+    String[] cols = { "ID", "Nombre", "Genero", "Duracion", "Formato", "Idioma" };
     public int idEditando = -1;
     
-    public PanelClientes() {                        
+    public PanelPeliculas() {                        
         initComponents();       
     }
             
@@ -65,18 +65,18 @@ public class PanelClientes extends JPanel{
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(new Color(254, 254, 254));
         
-        JLabel titulo = new JLabel("CLIENTES");
+        JLabel titulo = new JLabel("PELICULAS");
         titulo.setFont(new Font("Segeo UI", Font.BOLD, 42));        
         titulo.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
                 
-        dtmClientes = new DefaultTableModel(null, cols) {
+        dtmPeliculas = new DefaultTableModel(null, cols) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // La tabla no es editable directamente
             }
         };
-        tablaClientes = new JTable(dtmClientes);
-        spPrincipal = new JScrollPane(tablaClientes);
+        tablaPeliculas = new JTable(dtmPeliculas);
+        spPrincipal = new JScrollPane(tablaPeliculas);
         
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panelBotones.setBackground(Color.red);
@@ -104,15 +104,15 @@ public class PanelClientes extends JPanel{
         lblTituloPanelAgregar = new JLabel();
         lblTituloPanelAgregar.setFont(new Font("Segoe UI", Font.BOLD, 28));
         JLabel lbl1 = crearLabel("Nombre:");
-        JLabel lbl2 = crearLabel("Edad:");        
-        JLabel lbl3 = crearLabel("Telefono:");
-        JLabel lbl4 = crearLabel("Correo:");                
-        JLabel lbl5 = crearLabel("ID_Membresia:");
-        txtNombre = crearTxt("Ingresa tu nombre", 100);
-        txtEdad = crearTxt("Ingresa tu edad", 100);        
-        txtTelefono = crearTxt("Ingresa tu telefono celular", 100);
-        txtCorreo = crearTxt("Ingresa tu correo electronico", 100);
-        txtIdMembership = crearTxt("Ingresa el nivel de membresia", 100);
+        JLabel lbl2 = crearLabel("Genero:");
+        JLabel lbl3 = crearLabel("Duracion:");
+        JLabel lbl4 = crearLabel("Formato:");
+        JLabel lbl5 = crearLabel("Idioma:");                
+        txtNombre = crearTxt("Nombre de la pelicula", 100);
+        txtGenero = crearTxt("Genero de la pelicula", 100);
+        txtDuracion = crearTxt("Duracion de la pelicula (hh:mm:ss)", 100);
+        txtFormato = crearTxt("Formato pelicula(.mkv, .mp4)", 100);
+        txtIdioma = crearTxt("Idioma de la pelicula", 100);
         
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));        
         btnGuardar = crearBtn("Guardar");
@@ -122,13 +122,13 @@ public class PanelClientes extends JPanel{
         formulario.add(lbl1);
         formulario.add(txtNombre);
         formulario.add(lbl2);
-        formulario.add(txtEdad);
+        formulario.add(txtGenero);
         formulario.add(lbl3);
-        formulario.add(txtTelefono);
+        formulario.add(txtDuracion);
         formulario.add(lbl4);
-        formulario.add(txtCorreo);        
-        formulario.add(lbl5);        
-        formulario.add(txtIdMembership);
+        formulario.add(txtFormato);
+        formulario.add(lbl5);
+        formulario.add(txtIdioma);
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
         
@@ -145,9 +145,9 @@ public class PanelClientes extends JPanel{
         JPanel panelBuscador = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();      
         gbc.insets = new Insets(5, 10, 5, 10);
-        JLabel titulo = new JLabel("Buscar Cliente", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("Buscar Pelicula", SwingConstants.CENTER);
         titulo.setFont(new Font("Segeo UI", Font.BOLD, 42));
-        txtBuscador = crearTxt("Buscar por ID de cliente", 50);
+        txtBuscador = crearTxt("Buscar por nombre de pelicula", 50);
         btnBuscar = crearBtn("Buscar");
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 3;                
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -159,7 +159,7 @@ public class PanelClientes extends JPanel{
         gbc.gridx = 2; gbc.gridwidth = 1;
         panelBuscador.add(btnBuscar, gbc);
         
-        tablaBuscar = new JTable(dtmClientes);
+        tablaBuscar = new JTable(dtmPeliculas);
         spBuscar = new JScrollPane(tablaBuscar);
         
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -177,20 +177,19 @@ public class PanelClientes extends JPanel{
     //----- Modos (Registrar / Editar) -------------------------------
     public void activarModoRegistro() {
         idEditando = -1;
-        lblTituloPanelAgregar.setText("Registrar Cliente");
+        lblTituloPanelAgregar.setText("Registrar Pelicula");
         card.show(this, "REGISTRAR");
     }
 
-    public void activarModoEdicion(int id, String nombre, String edad,
-                                    String telefono, String correo,
-                                    int id_membresia) {
+    public void activarModoEdicion(int id, String nombre, String genero,
+                                    String duracion, String formato, String idioma) {
         idEditando = id;
         txtNombre.setText(nombre);
-        txtEdad.setText(edad);
-        txtTelefono.setText(telefono);
-        txtCorreo.setText(correo);
-        txtIdMembership.setText(String.valueOf(id_membresia));
-        lblTituloPanelAgregar.setText("Editar Cliente");
+        txtGenero.setText(genero);
+        txtDuracion.setText(duracion);
+        txtFormato.setText(formato);
+        txtIdioma.setText(idioma);
+        lblTituloPanelAgregar.setText("Editar pelicula");
         card.show(this, "REGISTRAR");
     }
 
@@ -206,32 +205,22 @@ public class PanelClientes extends JPanel{
     
     //----- Metodos para los datos del formulario ----------------------
     //Recupera los datos de los campos del formulario
-    public Client getFormData() {
-        try {
-            return new Client(
-                txtNombre.getText(),
-                txtEdad.getText(),
-                txtTelefono.getText(),
-                txtCorreo.getText(),
-                Integer.parseInt(txtIdMembership.getText())
-            );
-        } catch (NumberFormatException e) {
-            // Retorna null si el id no es un número válido
-            return null;                        
-        }
+    public Movie getFormData() {
+        return new Movie(
+            txtNombre.getText(),
+            txtGenero.getText(),
+            txtDuracion.getText(),
+            txtFormato.getText(),
+            txtIdioma.getText()
+        );
     }
     //Limpia los campos del formulario con los mensajes por defecto
     public void limpiarFormulario() {
-        txtNombre.setText("Ingresa tu nombre");
-        txtEdad.setText("Ingresa tu edad");
-        txtTelefono.setText("Ingresa tu telefono celular");
-        txtCorreo.setText("Ingresa tu correo electronico");
-        txtIdMembership.setText("Ingresa el nivel de membresia");
-        txtNombre.setForeground(Color.GRAY);
-        txtEdad.setForeground(Color.GRAY);
-        txtTelefono.setForeground(Color.GRAY);
-        txtCorreo.setForeground(Color.GRAY);
-        txtIdMembership.setForeground(Color.GRAY);
+        txtNombre.setText("Nombre de la pelicula");
+        txtGenero.setText("Genero de la pelicula");
+        txtDuracion.setText("Duracion de la pelicula (hh:mm:ss)");
+        txtFormato.setText("Formato pelicula(.mkv, .mp4)");
+        txtIdioma.setText("Idioma de la pelicula");
     }
     
     //----- Helpers construcction --------------------------------------
