@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -19,17 +20,26 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 public class VentanaInicio extends JFrame{    
-    public JPanel panelFondo, panelCentral, panelSideBar, panelHeader, 
-            panelUsuarios;
-    public JButton btnUsuarios, btn2, btn3, btnSalir;
+    public PanelClientes panelClientes;
+    public PanelPeliculas panelPeliculas;
+    public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
+    public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera, 
+            btnSalas, btnVender, btnSalir, btnCrear, btnLeer, btnActualizar, 
+            btnEliminar;
     public JLabel lblTitulo;
     public JTextField txt1;
     public CardLayout card;
+    public DefaultTableModel dtmClientes;
+    public JTable tablaClientes;
     
     public VentanaInicio() {
         configFrame();
@@ -42,6 +52,7 @@ public class VentanaInicio extends JFrame{
         //setExtendedState(MAXIMIZED_BOTH);
         setSize(1200, 700);                        
         setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());
+        setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -59,16 +70,16 @@ public class VentanaInicio extends JFrame{
         add(panelFondo);
     }
     
-    //--------- Creacion de paneles ------------------------------------
+    //--------- CREACION DE PANELES ------------------------------------
     private JPanel crearPanelHeader() {
         JPanel p = new JPanel(new FlowLayout()); 
-        p.setSize(0, 50);
+        p.setPreferredSize(new Dimension(0, 130));
         p.setBackground(Color.red);
-        //p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         JLabel imgLogo = new JLabel(resizeImage("entrada-de-cine.png", 124, 124), SwingConstants.CENTER);
         JLabel titulo = crearLabel("Cinefan");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 52));
+        titulo.setForeground(Color.white);
         
         p.add(imgLogo);
         p.add(titulo);
@@ -79,17 +90,27 @@ public class VentanaInicio extends JFrame{
     private JPanel crearSideBar() {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBackground(Color.green);
+        p.setBackground(Color.orange);
         
-        btnUsuarios = crearBotonSideBar("Usuarios", "anadir-contacto.png");
+        btnClientes = crearBotonSideBar("Clientes", "anadir-contacto.png");
+        btnPeliculas = crearBotonSideBar("Peliculas", "carrete-de-pelicula.png");
+        btnFunciones = crearBotonSideBar("Funciones", "tiempo-de-la-funcion.png");
+        btnCartelera = crearBotonSideBar("Carteleras", "pelicula.png");
+        btnSalas = crearBotonSideBar("Sala", "cine.png");
+        btnVender = crearBotonSideBar("Vender", "entradas.png");
         btnSalir = crearBotonSideBar("Salir", "salida.png");
         
-        p.add(btnUsuarios);
+        p.add(btnClientes);
+        p.add(btnPeliculas);
+        p.add(btnFunciones);
+        p.add(btnCartelera);
+        p.add(btnSalas);
+        p.add(btnVender);
+        p.add(Box.createVerticalStrut(260));
+        JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
+        //separator.setForeground(Color.white);
+        p.add(separator);       
         p.add(btnSalir);
-        
-        // Eventos de CardLayout
-        btnUsuarios.addActionListener(e -> card.show(panelCentral, "USUARIOS"));
-        btnSalir.addActionListener(e -> botonSalir());
         
         return p;        
     }
@@ -97,22 +118,17 @@ public class VentanaInicio extends JFrame{
     private JPanel crearPanelCentral() {
         card = new CardLayout();
         JPanel p = new JPanel(card);        
+        // PANELES
+        panelClientes = new PanelClientes();
+        panelPeliculas = new PanelPeliculas();
         
-        //----- PANEL USUARIOS ----------------------------------
-        panelUsuarios = new JPanel();
-        panelUsuarios.setBackground(new Color(254, 254, 254));
+        p.add(panelClientes, "CLIENTES");
+        p.add(panelPeliculas, "PELICULAS");
         
-        JLabel lblInfo = new JLabel("Panel Usuarios", SwingConstants.CENTER);
-        panelUsuarios.add(lblInfo);
-        
-        //----- AÑADIR PANELES ----------------------------------
-        p.add(panelUsuarios, "USUARIOS");
-        p.add(new JLabel("Pantalla Salir", SwingConstants.CENTER), "SALIR");
-        
-        card.show(p, "USUARIOS");
+        card.show(p, "CLIENTES"); // Panel a mostrar por defecto
         
         return p;
-    }               
+    } 
     
     //----- Helpers construccion --------------------------------------
     private JButton crearBotonSideBar(String texto, String pathIcon) {
@@ -123,10 +139,12 @@ public class VentanaInicio extends JFrame{
         b.setBorderPainted(false);
         b.setFocusPainted(false);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setHorizontalAlignment(SwingConstants.LEFT); // texto e icono a la izquierda
+        b.setIconTextGap(10);                          // espacio entre icono y texto
         b.setMaximumSize(new Dimension(
             Integer.MAX_VALUE,
             b.getPreferredSize().height
-    ));
+        ));
         
         b.addMouseListener(new MouseAdapter() {
             @Override
@@ -165,13 +183,8 @@ public class VentanaInicio extends JFrame{
         return new ImageIcon(img);
     }
     
-    private ImageIcon crearIcono(String path) {
-        return new ImageIcon(getClass().getResource("/resources/" + path));
-    }
-    
-    private void botonSalir() {
-        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
+    public void botonSalir() {
+        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);        
         if(result == JOptionPane.NO_OPTION) return;
         
         System.exit(0);
