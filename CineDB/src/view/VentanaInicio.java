@@ -32,8 +32,9 @@ public class VentanaInicio extends JFrame{
     public PanelClientes panelClientes;
     public PanelPeliculas panelPeliculas;
     public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
-    public JButton btnUsuarios, btnPeliculas, btnFunciones, btnCartelera, 
-            btnSalir, btnCrear, btnLeer, btnActualizar, btnEliminar;
+    public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera, 
+            btnSalas, btnVender, btnSalir, btnCrear, btnLeer, btnActualizar, 
+            btnEliminar;
     public JLabel lblTitulo;
     public JTextField txt1;
     public CardLayout card;
@@ -51,6 +52,7 @@ public class VentanaInicio extends JFrame{
         //setExtendedState(MAXIMIZED_BOTH);
         setSize(1200, 700);                        
         setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());
+        setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -90,28 +92,25 @@ public class VentanaInicio extends JFrame{
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBackground(Color.orange);
         
-        btnUsuarios = crearBotonSideBar("Usuarios", "anadir-contacto.png");
+        btnClientes = crearBotonSideBar("Clientes", "anadir-contacto.png");
         btnPeliculas = crearBotonSideBar("Peliculas", "carrete-de-pelicula.png");
         btnFunciones = crearBotonSideBar("Funciones", "tiempo-de-la-funcion.png");
         btnCartelera = crearBotonSideBar("Carteleras", "pelicula.png");
+        btnSalas = crearBotonSideBar("Sala", "cine.png");
+        btnVender = crearBotonSideBar("Vender", "entradas.png");
         btnSalir = crearBotonSideBar("Salir", "salida.png");
         
-        p.add(btnUsuarios);
+        p.add(btnClientes);
         p.add(btnPeliculas);
         p.add(btnFunciones);
         p.add(btnCartelera);
-         p.add(Box.createVerticalStrut(300));
+        p.add(btnSalas);
+        p.add(btnVender);
+        p.add(Box.createVerticalStrut(260));
         JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
         //separator.setForeground(Color.white);
         p.add(separator);       
         p.add(btnSalir);
-        
-        // Eventos de CardLayout
-        btnUsuarios.addActionListener(e -> card.show(panelCentral, "USUARIOS"));
-        btnPeliculas.addActionListener(e -> card.show(panelCentral, "PELICULAS"));
-        btnFunciones.addActionListener(e -> card.show(panelCentral, "FUNCIONES"));
-        btnCartelera.addActionListener(e -> card.show(panelCentral, "CARTELERAS"));
-        btnSalir.addActionListener(e -> botonSalir());
         
         return p;        
     }
@@ -123,10 +122,10 @@ public class VentanaInicio extends JFrame{
         panelClientes = new PanelClientes();
         panelPeliculas = new PanelPeliculas();
         
-        p.add(panelClientes, "USUARIOS");
+        p.add(panelClientes, "CLIENTES");
         p.add(panelPeliculas, "PELICULAS");
         
-        card.show(p, "USUARIOS"); // Panel a mostrar por defecto
+        card.show(p, "CLIENTES"); // Panel a mostrar por defecto
         
         return p;
     } 
@@ -140,10 +139,12 @@ public class VentanaInicio extends JFrame{
         b.setBorderPainted(false);
         b.setFocusPainted(false);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setHorizontalAlignment(SwingConstants.LEFT); // texto e icono a la izquierda
+        b.setIconTextGap(10);                          // espacio entre icono y texto
         b.setMaximumSize(new Dimension(
             Integer.MAX_VALUE,
             b.getPreferredSize().height
-    ));
+        ));
         
         b.addMouseListener(new MouseAdapter() {
             @Override
@@ -182,9 +183,8 @@ public class VentanaInicio extends JFrame{
         return new ImageIcon(img);
     }
     
-    private void botonSalir() {
-        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
+    public void botonSalir() {
+        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);        
         if(result == JOptionPane.NO_OPTION) return;
         
         System.exit(0);
