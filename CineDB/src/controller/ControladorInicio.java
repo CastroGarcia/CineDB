@@ -22,7 +22,8 @@ public class ControladorInicio {
         new ControladorPeliculas(conn, view.panelPeliculas);
         new ControladorClientes(conn, view.panelClientes);
         new ControladorMembresias(conn, view.panelMembresias);
-        new ControladorSalas(conn, view.panelSalas);    // <-- NUEVO
+        new ControladorSalas(conn, view.panelSalas);
+        new ControladorFunciones(conn, view.panelFunciones);
     }
 
     private void initController() {
