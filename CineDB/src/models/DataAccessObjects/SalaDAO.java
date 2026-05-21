@@ -17,12 +17,11 @@ public class SalaDAO {
     }
 
     public boolean registerSala() {
-        String sql = "INSERT INTO sala (num_sala, asientos, id_funciones, disponible) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO sala (num_sala, asientos, disponible) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, sala.getNumSala());
-            ps.setInt(2, sala.getAsientos());
-            ps.setInt(3, sala.getIdFunciones());
-            ps.setBoolean(4, sala.isDisponible());
+            ps.setInt(2, sala.getAsientos());            
+            ps.setBoolean(3, sala.isDisponible());
             ps.executeUpdate();
             System.out.println("Sala registrada");
             return true;
@@ -33,12 +32,11 @@ public class SalaDAO {
     }
 
     public boolean updateSala() {
-        String sql = "UPDATE sala SET asientos=?, id_funciones=?, disponible=? WHERE num_sala=?";
+        String sql = "UPDATE sala SET asientos=?, disponible=? WHERE num_sala=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, sala.getAsientos());
-            ps.setInt(2, sala.getIdFunciones());
-            ps.setBoolean(3, sala.isDisponible());
-            ps.setInt(4, sala.getNumSala());
+            ps.setInt(1, sala.getAsientos());            
+            ps.setBoolean(2, sala.isDisponible());
+            ps.setInt(3, sala.getNumSala());
             ps.executeUpdate();
             System.out.println("Sala actualizada");
             return true;
@@ -70,8 +68,7 @@ public class SalaDAO {
                 salas.add(new Sala(
                     rs.getInt("num_sala"),
                     rs.getInt("asientos"),
-                    rs.getInt("id_funciones"),
-                    rs.getBoolean("disponible")
+                    rs.getBoolean("disponible")                
                 ));
             }
         } catch (Exception e) {
@@ -90,7 +87,6 @@ public class SalaDAO {
                 salas.add(new Sala(
                     rs.getInt("num_sala"),
                     rs.getInt("asientos"),
-                    rs.getInt("id_funciones"),
                     rs.getBoolean("disponible")
                 ));
             }

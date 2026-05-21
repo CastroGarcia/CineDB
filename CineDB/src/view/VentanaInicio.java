@@ -28,7 +28,8 @@ public class VentanaInicio extends JFrame {
     public PanelClientes panelClientes;
     public PanelPeliculas panelPeliculas;
     public PanelMembresias panelMembresias;
-    public PanelSalas panelSalas;           // <-- NUEVO
+    public PanelSalas panelSalas;
+    public PanelFunciones panelFunciones;
     public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
     public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera,
             btnSalas, btnMembresias, btnVender, btnSalir, btnCrear, btnLeer,
@@ -48,8 +49,7 @@ public class VentanaInicio extends JFrame {
         setLayout(new BorderLayout());
         setTitle("Cinefan");
         setSize(1200, 700);
-        setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());
-        setUndecorated(true);
+        setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -99,7 +99,7 @@ public class VentanaInicio extends JFrame {
         p.add(btnClientes);
         p.add(btnPeliculas);
         p.add(btnFunciones);
-        p.add(btnCartelera);
+        //p.add(btnCartelera);
         p.add(btnSalas);
         p.add(btnMembresias);
         p.add(btnVender);
@@ -119,12 +119,14 @@ public class VentanaInicio extends JFrame {
         panelClientes  = new PanelClientes();
         panelPeliculas = new PanelPeliculas();
         panelMembresias = new PanelMembresias();
-        panelSalas     = new PanelSalas();      // <-- NUEVO
+        panelSalas     = new PanelSalas();
+        panelFunciones = new PanelFunciones();
 
         p.add(panelClientes,   "CLIENTES");
         p.add(panelPeliculas,  "PELICULAS");
         p.add(panelMembresias, "MEMBRESIAS");
-        p.add(panelSalas,      "SALAS");        // <-- NUEVO
+        p.add(panelSalas,      "SALAS");
+        p.add(panelFunciones,  "FUNCIONES");
 
         card.show(p, "CLIENTES");
         return p;

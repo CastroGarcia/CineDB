@@ -34,13 +34,17 @@ public class PanelSalas extends JPanel {
     public JTable tablaSalas, tablaBuscar;
     private JScrollPane spPrincipal, spBuscar;
     public JButton btnCrear, btnLeer, btnActualizar, btnEliminar,
-            btnGuardar, btnCancelar, btnBuscar, btnRegresar;
-    public JTextField txtNumSala, txtAsientos, txtIdFunciones, txtBuscador;
+            btnGuardar, btnCancelar, btnBuscar, btnRegresar, btnVerAsientos;
+    public static final int ASIENTOS_FIJOS = 60;
+    public JTextField txtNumSala, txtBuscador;
     public JCheckBox chkDisponible;
     public CardLayout card;
     public JLabel lblTituloPanelAgregar;
-    String[] cols = {"Num Sala", "Asientos", "ID Funcion", "Disponible"};
+    String[] cols = {"Num Sala", "Disponible"};
     public int numSalaEditando = -1;
+
+    // Seat panel
+    public PanelAsientos panelAsientos;
 
     public PanelSalas() {
         initComponents();
@@ -52,10 +56,12 @@ public class PanelSalas extends JPanel {
         panelPrincipal = crearPanelPrincipal();
         panelRegistrar = crearPanelAgregar();
         panelBuscar    = crearPanelBuscar();
+        panelAsientos  = new PanelAsientos();
 
         add(panelPrincipal, "PRINCIPAL");
         add(panelRegistrar, "REGISTRAR");
         add(panelBuscar,    "BUSCAR");
+        add(panelAsientos,  "ASIENTOS");
 
         card.show(this, "PRINCIPAL");
     }
@@ -78,14 +84,16 @@ public class PanelSalas extends JPanel {
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         panelBotones.setBackground(Color.red);
-        btnCrear      = crearBoton("Agregar",   "registro.png");
-        btnLeer       = crearBoton("Mostrar",   "consulta.png");
-        btnActualizar = crearBoton("Gestionar", "editar.png");
-        btnEliminar   = crearBoton("Borrar",    "basura.png");
+        btnCrear       = crearBoton("Agregar",    "registro.png");
+        btnLeer        = crearBoton("Mostrar",    "consulta.png");
+        btnActualizar  = crearBoton("Gestionar",  "editar.png");
+        btnEliminar    = crearBoton("Borrar",     "basura.png");
+        btnVerAsientos = crearBoton("Ver Asientos","cine.png");
         panelBotones.add(btnCrear);
         panelBotones.add(btnLeer);
         panelBotones.add(btnActualizar);
         panelBotones.add(btnEliminar);
+        panelBotones.add(btnVerAsientos);
 
         p.add(titulo,       BorderLayout.NORTH);
         p.add(spPrincipal,  BorderLayout.CENTER);
@@ -103,9 +111,7 @@ public class PanelSalas extends JPanel {
         lblTituloPanelAgregar = new JLabel();
         lblTituloPanelAgregar.setFont(new Font("Segoe UI", Font.BOLD, 28));
 
-        txtNumSala     = crearTxt("Numero de sala", 100);
-        txtAsientos    = crearTxt("Numero de asientos", 100);
-        txtIdFunciones = crearTxt("ID de la funcion asignada", 100);
+        txtNumSala     = crearTxt("Numero de sala", 100);        
         chkDisponible  = new JCheckBox("Disponible");
         chkDisponible.setSelected(true);
         chkDisponible.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -118,11 +124,7 @@ public class PanelSalas extends JPanel {
 
         formulario.add(lblTituloPanelAgregar);
         formulario.add(crearLabel("Numero de Sala:"));
-        formulario.add(txtNumSala);
-        formulario.add(crearLabel("Asientos:"));
-        formulario.add(txtAsientos);
-        formulario.add(crearLabel("ID Funcion:"));
-        formulario.add(txtIdFunciones);
+        formulario.add(txtNumSala);                
         formulario.add(chkDisponible);
 
         fondo.add(formulario,   BorderLayout.CENTER);
@@ -175,15 +177,14 @@ public class PanelSalas extends JPanel {
         card.show(this, "REGISTRAR");
     }
 
-    public void activarModoEdicion(int numSala, int asientos, int idFunciones, boolean disponible) {
+    public void activarModoEdicion(int numSala, boolean disponible) {
         numSalaEditando = numSala;
+
         txtNumSala.setText(String.valueOf(numSala));
         txtNumSala.setForeground(Color.BLACK);
-        txtAsientos.setText(String.valueOf(asientos));
-        txtAsientos.setForeground(Color.BLACK);
-        txtIdFunciones.setText(String.valueOf(idFunciones));
-        txtIdFunciones.setForeground(Color.BLACK);
+
         chkDisponible.setSelected(disponible);
+
         lblTituloPanelAgregar.setText("Editar Sala");
         card.show(this, "REGISTRAR");
     }
@@ -195,23 +196,20 @@ public class PanelSalas extends JPanel {
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
     }
-
-    // ----- Datos del formulario ------------------------------------------
+    
     public Sala getFormData() {
-        int numSala = 0, asientos = 0, idFunc = 0;
-        try { numSala  = Integer.parseInt(txtNumSala.getText().trim()); }     catch (NumberFormatException ignored) {}
-        try { asientos = Integer.parseInt(txtAsientos.getText().trim()); }    catch (NumberFormatException ignored) {}
-        try { idFunc   = Integer.parseInt(txtIdFunciones.getText().trim()); } catch (NumberFormatException ignored) {}
-        return new Sala(numSala, asientos, idFunc, chkDisponible.isSelected());
+        int numSala = 0;
+
+        try {
+            numSala = Integer.parseInt(txtNumSala.getText().trim());
+        } catch (NumberFormatException ignored) {}
+
+        return new Sala(numSala, ASIENTOS_FIJOS, chkDisponible.isSelected());
     }
 
     public void limpiarFormulario() {
         txtNumSala.setText("Numero de sala");
-        txtNumSala.setForeground(Color.GRAY);
-        txtAsientos.setText("Numero de asientos");
-        txtAsientos.setForeground(Color.GRAY);
-        txtIdFunciones.setText("ID de la funcion asignada");
-        txtIdFunciones.setForeground(Color.GRAY);
+        txtNumSala.setForeground(Color.GRAY);        
         chkDisponible.setSelected(true);
     }
 

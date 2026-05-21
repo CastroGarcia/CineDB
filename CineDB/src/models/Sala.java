@@ -2,22 +2,19 @@ package models;
 
 public class Sala {
     private int numSala;
-    private int asientos;
-    private int idFunciones;
+    private int asientos;    
     private boolean disponible;
 
     public Sala() {
         numSala = 0;
-        asientos = 0;
-        idFunciones = 0;
+        asientos = 0;        
         disponible = true;
     }
 
     // Constructor con todos los campos (para mostrar en tabla)
-    public Sala(int numSala, int asientos, int idFunciones, boolean disponible) {
+    public Sala(int numSala, int asientos, boolean disponible) {
         setNumSala(numSala);
-        setAsientos(asientos);
-        setIdFunciones(idFunciones);
+        setAsientos(asientos);        
         setDisponible(disponible);
     }
 
@@ -25,10 +22,7 @@ public class Sala {
     public void setNumSala(int numSala) { this.numSala = numSala; }
 
     public int getAsientos() { return asientos; }
-    public void setAsientos(int asientos) { this.asientos = asientos; }
-
-    public int getIdFunciones() { return idFunciones; }
-    public void setIdFunciones(int idFunciones) { this.idFunciones = idFunciones; }
+    public void setAsientos(int asientos) { this.asientos = asientos; }   
 
     public boolean isDisponible() { return disponible; }
     public void setDisponible(boolean disponible) { this.disponible = disponible; }
