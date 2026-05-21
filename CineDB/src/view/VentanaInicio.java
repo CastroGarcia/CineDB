@@ -24,80 +24,78 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-public class VentanaInicio extends JFrame{    
+public class VentanaInicio extends JFrame {
     public PanelClientes panelClientes;
     public PanelPeliculas panelPeliculas;
     public PanelMembresias panelMembresias;
+    public PanelSalas panelSalas;           // <-- NUEVO
     public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
-    public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera, 
-            btnSalas, btnMembresias, btnVender, btnSalir, btnCrear, btnLeer, 
+    public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera,
+            btnSalas, btnMembresias, btnVender, btnSalir, btnCrear, btnLeer,
             btnActualizar, btnEliminar;
     public JLabel lblTitulo;
     public JTextField txt1;
     public CardLayout card;
     public DefaultTableModel dtmClientes;
     public JTable tablaClientes;
-    
+
     public VentanaInicio() {
         configFrame();
         initComponents();
     }
-    
+
     private void configFrame() {
         setLayout(new BorderLayout());
         setTitle("Cinefan");
-        //setExtendedState(MAXIMIZED_BOTH);
-        setSize(1200, 700);                        
+        setSize(1200, 700);
         setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());
         setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
     }
-    
+
     private void initComponents() {
-        panelFondo = new JPanel(new BorderLayout());
-        panelHeader = crearPanelHeader();
+        panelFondo   = new JPanel(new BorderLayout());
+        panelHeader  = crearPanelHeader();
         panelCentral = crearPanelCentral();
         panelSideBar = crearSideBar();
 
-        panelFondo.add(panelHeader, BorderLayout.NORTH);
+        panelFondo.add(panelHeader,  BorderLayout.NORTH);
         panelFondo.add(panelSideBar, BorderLayout.WEST);
         panelFondo.add(panelCentral, BorderLayout.CENTER);
         add(panelFondo);
     }
-    
-    //--------- CREACION DE PANELES ------------------------------------
+
     private JPanel crearPanelHeader() {
-        JPanel p = new JPanel(new FlowLayout()); 
+        JPanel p = new JPanel(new FlowLayout());
         p.setPreferredSize(new Dimension(0, 130));
         p.setBackground(Color.red);
-        
+
         JLabel imgLogo = new JLabel(resizeImage("entrada-de-cine.png", 124, 124), SwingConstants.CENTER);
-        JLabel titulo = crearLabel("Cinefan");
+        JLabel titulo  = crearLabel("Cinefan");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 52));
         titulo.setForeground(Color.white);
-        
+
         p.add(imgLogo);
         p.add(titulo);
-        
         return p;
     }
-    
+
     private JPanel crearSideBar() {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBackground(Color.orange);
-        
-        btnClientes = crearBotonSideBar("Clientes", "anadir-contacto.png");
-        btnPeliculas = crearBotonSideBar("Peliculas", "carrete-de-pelicula.png");
-        btnFunciones = crearBotonSideBar("Funciones", "tiempo-de-la-funcion.png");
+
+        btnClientes  = crearBotonSideBar("Clientes",   "anadir-contacto.png");
+        btnPeliculas = crearBotonSideBar("Peliculas",  "carrete-de-pelicula.png");
+        btnFunciones = crearBotonSideBar("Funciones",  "tiempo-de-la-funcion.png");
         btnCartelera = crearBotonSideBar("Carteleras", "pelicula.png");
-        btnSalas = crearBotonSideBar("Sala", "cine.png");
-        btnMembresias = crearBotonSideBar("Membresias", "anadir-contacto.png");
-        btnVender = crearBotonSideBar("Vender", "entradas.png");
-        btnSalir = crearBotonSideBar("Salir", "salida.png");
-        
+        btnSalas     = crearBotonSideBar("Sala",       "cine.png");
+        btnMembresias = crearBotonSideBar("Membresias","anadir-contacto.png");
+        btnVender    = crearBotonSideBar("Vender",     "entradas.png");
+        btnSalir     = crearBotonSideBar("Salir",      "salida.png");
+
         p.add(btnClientes);
         p.add(btnPeliculas);
         p.add(btnFunciones);
@@ -108,80 +106,64 @@ public class VentanaInicio extends JFrame{
         p.add(Box.createVerticalStrut(213));
         JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
         separator.setForeground(Color.white);
-        p.add(separator);       
+        p.add(separator);
         p.add(Box.createVerticalStrut(8));
         p.add(btnSalir);
-        
-        return p;        
+        return p;
     }
-    
+
     private JPanel crearPanelCentral() {
         card = new CardLayout();
-        JPanel p = new JPanel(card);        
-        // PANELES
-        panelClientes = new PanelClientes();
+        JPanel p = new JPanel(card);
+
+        panelClientes  = new PanelClientes();
         panelPeliculas = new PanelPeliculas();
         panelMembresias = new PanelMembresias();
-        
-        p.add(panelClientes, "CLIENTES");
-        p.add(panelPeliculas, "PELICULAS");
+        panelSalas     = new PanelSalas();      // <-- NUEVO
+
+        p.add(panelClientes,   "CLIENTES");
+        p.add(panelPeliculas,  "PELICULAS");
         p.add(panelMembresias, "MEMBRESIAS");
-        
-        card.show(p, "CLIENTES"); // Panel a mostrar por defecto
-        
+        p.add(panelSalas,      "SALAS");        // <-- NUEVO
+
+        card.show(p, "CLIENTES");
         return p;
-    } 
-    
-    //----- Helpers construccion --------------------------------------
+    }
+
     private JButton crearBotonSideBar(String texto, String pathIcon) {
-        JButton b = new JButton(texto, new ImageIcon(getClass().getResource("/resources/" + pathIcon)));              
+        JButton b = new JButton(texto, new ImageIcon(getClass().getResource("/resources/" + pathIcon)));
         b.setBackground(Color.orange);
         b.setForeground(Color.white);
         b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         b.setBorderPainted(false);
         b.setFocusPainted(false);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.setHorizontalAlignment(SwingConstants.LEFT); // texto e icono a la izquierda
-        b.setIconTextGap(10);                          // espacio entre icono y texto
-        b.setMaximumSize(new Dimension(
-            Integer.MAX_VALUE,
-            b.getPreferredSize().height
-        ));
-        
+        b.setHorizontalAlignment(SwingConstants.LEFT);
+        b.setIconTextGap(10);
+        b.setMaximumSize(new Dimension(Integer.MAX_VALUE, b.getPreferredSize().height));
         b.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                b.setBackground(Color.blue);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                b.setBackground(Color.orange);
-            }            
+            @Override public void mouseEntered(MouseEvent e) { b.setBackground(Color.blue);   }
+            @Override public void mouseExited(MouseEvent e)  { b.setBackground(Color.orange); }
         });
-        
         return b;
     }
-    
+
     private JLabel crearLabel(String texto) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        
         return lbl;
     }
-    
-    //----- Metodos auxiliares -------------------------------------
+
     private ImageIcon resizeImage(String path, int width, int height) {
         ImageIcon icon = new ImageIcon(getClass().getResource("/resources/" + path));
         Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        
         return new ImageIcon(img);
     }
-    
+
     public void botonSalir() {
-        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);        
-        if(result == JOptionPane.NO_OPTION) return;
-        
+        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result == JOptionPane.NO_OPTION) return;
         System.exit(0);
     }
 }
