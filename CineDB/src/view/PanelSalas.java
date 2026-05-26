@@ -1,191 +1,248 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.table.*;
 import models.Sala;
 
 public class PanelSalas extends JPanel {
-    private JPanel panelPrincipal, panelRegistrar, panelBuscar;
-    public DefaultTableModel dtmSalas;
-    public JTable tablaSalas, tablaBuscar;
-    private JScrollPane spPrincipal, spBuscar;
-    public JButton btnCrear, btnLeer, btnActualizar, btnEliminar,
-            btnGuardar, btnCancelar, btnBuscar, btnRegresar, btnVerAsientos;
-    public static final int ASIENTOS_FIJOS = 60;
-    public JTextField txtNumSala, txtBuscador;
-    public JCheckBox chkDisponible;
-    public CardLayout card;
-    public JLabel lblTituloPanelAgregar;
-    String[] cols = {"Num Sala", "Disponible"};
-    public int numSalaEditando = -1;
 
-    // Seat panel
+    public DefaultTableModel dtmSalas;
+    public JTable            tablaSalas, tablaBuscar;
+    public JButton           btnCrear, btnLeer, btnActualizar, btnEliminar,
+                             btnGuardar, btnCancelar, btnBuscar, btnRegresar,
+                             btnVerAsientos;
+    public JTextField        txtNumSala, txtAsientos, txtBuscador;
+    public JCheckBox         chkDisponible;
+    public CardLayout        card;
+    public JLabel            lblTituloPanelAgregar;
+    public int               numSalaEditando = -1;
+
+    public static final int ASIENTOS_FIJOS = 60;
+
+    private static final String[] COLS = { "Num. sala", "Asientos", "Disponible" };
+
     public PanelAsientos panelAsientos;
 
-    public PanelSalas() {
-        initComponents();
-    }
+    public PanelSalas() { initComponents(); }
 
     private void initComponents() {
         card = new CardLayout();
         setLayout(card);
-        panelPrincipal = crearPanelPrincipal();
-        panelRegistrar = crearPanelAgregar();
-        panelBuscar    = crearPanelBuscar();
-        panelAsientos  = new PanelAsientos();
+        setBackground(Theme.CONTENT_BG);
 
-        add(panelPrincipal, "PRINCIPAL");
-        add(panelRegistrar, "REGISTRAR");
-        add(panelBuscar,    "BUSCAR");
-        add(panelAsientos,  "ASIENTOS");
+        panelAsientos = new PanelAsientos();
 
+        add(crearPanelPrincipal(), "PRINCIPAL");
+        add(crearPanelAgregar(),   "REGISTRAR");
+        add(crearPanelBuscar(),    "BUSCAR");
+        add(panelAsientos,         "ASIENTOS");
         card.show(this, "PRINCIPAL");
     }
 
-    // ----- PANELES -------------------------------------------------------
+    // ── Principal ─────────────────────────────────────────────────────────────
+
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(254, 254, 254));
+        p.setBackground(Theme.CONTENT_BG);
 
-        JLabel titulo = new JLabel("SALAS");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 42));
-        titulo.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Theme.SURFACE);
+        header.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(16, 20, 16, 20)
+        ));
+        header.add(Theme.titleLabel("Salas"), BorderLayout.WEST);
+        p.add(header, BorderLayout.NORTH);
 
-        dtmSalas = new DefaultTableModel(null, cols) {
-            @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+        dtmSalas = new DefaultTableModel(null, COLS) {
+            public boolean isCellEditable(int r, int c) { return false; }
         };
-        tablaSalas  = new JTable(dtmSalas);
-        spPrincipal = new JScrollPane(tablaSalas);
+        tablaSalas = PanelClientes.estilizarTabla(new JTable(dtmSalas));
+        Theme.centerTable(tablaSalas);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panelBotones.setBackground(Color.red);
-        btnCrear       = crearBoton("Agregar",    "registro.png");
-        btnLeer        = crearBoton("Mostrar",    "consulta.png");
-        btnActualizar  = crearBoton("Gestionar",  "editar.png");
-        btnEliminar    = crearBoton("Borrar",     "basura.png");
-        btnVerAsientos = crearBoton("Ver Asientos","cine.png");
-        panelBotones.add(btnCrear);
-        panelBotones.add(btnLeer);
-        panelBotones.add(btnActualizar);
-        panelBotones.add(btnEliminar);
-        panelBotones.add(btnVerAsientos);
+        // Badge renderer for "Disponible" column
+        tablaSalas.getColumnModel().getColumn(2).setCellRenderer( new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                JTable table, Object value,
+                boolean isSelected, boolean hasFocus,
+            int row, int column) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column);
 
-        p.add(titulo,       BorderLayout.NORTH);
-        p.add(spPrincipal,  BorderLayout.CENTER);
-        p.add(panelBotones, BorderLayout.SOUTH);
+                // Evitar null
+                boolean disp = false;
+
+                if (value != null) {
+                    String texto = value.toString().trim().toLowerCase();
+
+                    disp =
+                        texto.equals("true") ||
+                        texto.equals("disponible") ||
+                        texto.equals("si") ||
+                        texto.equals("sí") ||
+                        texto.equals("1");
+                }
+
+                l.setHorizontalAlignment(SwingConstants.CENTER);
+                l.setText(disp ? "Disponible" : "No disponible");
+                l.setFont(new Font("Segoe UI", Font.BOLD, 12));
+
+                if (!isSelected) {
+                    l.setForeground(disp ? Theme.GREEN_FG : Theme.RED_DARK);
+                    l.setBackground(disp ? Theme.GREEN_BG : Theme.RED_LIGHT);
+                } else {
+                    l.setForeground(Color.WHITE);
+                    l.setBackground(table.getSelectionBackground());
+                }
+
+                l.setOpaque(true);
+                return l;
+            }
+        });
+
+        JPanel body = new JPanel(new BorderLayout());
+        body.setBackground(Theme.CONTENT_BG);
+        body.setBorder(BorderFactory.createEmptyBorder(0, 20, 16, 20));
+        body.add(PanelClientes.crearScrollPane(tablaSalas), BorderLayout.CENTER);
+        p.add(body, BorderLayout.CENTER);
+
+        btnCrear       = Theme.primaryButton("+ Agregar");
+        btnLeer        = Theme.ghostButton("Buscar");
+        btnActualizar  = Theme.ghostButton("Editar");
+        btnEliminar    = Theme.dangerButton("Eliminar");
+        btnVerAsientos = Theme.ghostButton("Ver asientos");
+
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        barra.setBackground(Theme.SURFACE);
+        barra.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
+        barra.add(btnVerAsientos);
+        barra.add(btnLeer);
+        barra.add(btnActualizar);
+        barra.add(btnEliminar);
+        barra.add(btnCrear);
+        p.add(barra, BorderLayout.SOUTH);
         return p;
     }
 
+    // ── Formulario ────────────────────────────────────────────────────────────
+
     private JPanel crearPanelAgregar() {
-        JPanel fondo = new JPanel(new BorderLayout());
+        JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(Theme.CONTENT_BG);
 
-        JPanel formulario = new JPanel();
-        formulario.setLayout(new BoxLayout(formulario, BoxLayout.Y_AXIS));
-        formulario.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Theme.SURFACE);
+        header.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(16, 20, 16, 20)
+        ));
+        lblTituloPanelAgregar = Theme.sectionLabel("");
+        header.add(lblTituloPanelAgregar, BorderLayout.WEST);
+        root.add(header, BorderLayout.NORTH);
 
-        lblTituloPanelAgregar = new JLabel();
-        lblTituloPanelAgregar.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Theme.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Theme.BORDER, 1),
+            BorderFactory.createEmptyBorder(24, 24, 24, 24)
+        ));
 
-        txtNumSala     = crearTxt("Numero de sala", 100);        
-        chkDisponible  = new JCheckBox("Disponible");
+        txtNumSala = Theme.styledField("Número de sala", 20);
+        txtNumSala.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+
+        chkDisponible = new JCheckBox("Sala disponible");
+        chkDisponible.setFont(Theme.FONT_BODY);
+        chkDisponible.setForeground(Theme.TEXT_PRIMARY);
+        chkDisponible.setBackground(Theme.SURFACE);
         chkDisponible.setSelected(true);
-        chkDisponible.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        chkDisponible.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        btnGuardar  = new JButton("Guardar");
-        btnCancelar = new JButton("Cancelar");
-        panelBotones.add(btnGuardar);
-        panelBotones.add(btnCancelar);
+        JLabel infoAsientos = Theme.bodyLabel(
+            "Esta sala tendrá " + ASIENTOS_FIJOS + " asientos generados automáticamente.");
+        infoAsientos.setForeground(Theme.TEXT_SECONDARY);
+        infoAsientos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        formulario.add(lblTituloPanelAgregar);
-        formulario.add(crearLabel("Numero de Sala:"));
-        formulario.add(txtNumSala);                
-        formulario.add(chkDisponible);
+        card.add(fieldRow("Número de sala", txtNumSala));
+        card.add(Box.createVerticalStrut(14));
+        card.add(chkDisponible);
+        card.add(Box.createVerticalStrut(12));
+        card.add(infoAsientos);
 
-        fondo.add(formulario,   BorderLayout.CENTER);
-        fondo.add(panelBotones, BorderLayout.SOUTH);
-        return fondo;
+        JPanel wrap = new JPanel(new BorderLayout());
+        wrap.setBackground(Theme.CONTENT_BG);
+        wrap.setBorder(BorderFactory.createEmptyBorder(16, 20, 0, 20));
+        wrap.add(card, BorderLayout.NORTH);
+        root.add(wrap, BorderLayout.CENTER);
+
+        btnGuardar  = Theme.primaryButton("Guardar");
+        btnCancelar = Theme.ghostButton("Cancelar");
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        barra.setBackground(Theme.SURFACE);
+        barra.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
+        barra.add(btnCancelar);
+        barra.add(btnGuardar);
+        root.add(barra, BorderLayout.SOUTH);
+        return root;
     }
+
+    // ── Buscar ────────────────────────────────────────────────────────────────
 
     private JPanel crearPanelBuscar() {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(254, 254, 254));
+        p.setBackground(Theme.CONTENT_BG);
 
-        JPanel panelBuscador = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
+        JPanel top = new JPanel(new BorderLayout());
+        top.setBackground(Theme.SURFACE);
+        top.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(14, 20, 14, 20)
+        ));
+        top.add(Theme.titleLabel("Buscar sala"), BorderLayout.NORTH);
 
-        JLabel titulo = new JLabel("Buscar Sala", SwingConstants.CENTER);
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 42));
-        txtBuscador = crearTxt("Buscar por numero de sala", 50);
-        btnBuscar   = new JButton("Buscar");
+        txtBuscador = Theme.styledField("Buscar por número de sala", 20);
+        btnBuscar   = Theme.primaryButton("Buscar");
+        JPanel sr = new JPanel(new BorderLayout(8, 0));
+        sr.setBackground(Theme.SURFACE);
+        sr.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        sr.add(txtBuscador, BorderLayout.CENTER);
+        sr.add(btnBuscar,   BorderLayout.EAST);
+        top.add(sr, BorderLayout.CENTER);
+        p.add(top, BorderLayout.NORTH);
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panelBuscador.add(titulo, gbc);
-        gbc.gridy = 1; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.NONE;
-        panelBuscador.add(txtBuscador, gbc);
-        gbc.gridx = 2; gbc.gridwidth = 1;
-        panelBuscador.add(btnBuscar, gbc);
+        tablaBuscar = PanelClientes.estilizarTabla(new JTable(dtmSalas));
+        JPanel body = new JPanel(new BorderLayout());
+        body.setBackground(Theme.CONTENT_BG);
+        body.setBorder(BorderFactory.createEmptyBorder(16, 20, 0, 20));
+        body.add(PanelClientes.crearScrollPane(tablaBuscar), BorderLayout.CENTER);
+        p.add(body, BorderLayout.CENTER);
 
-        tablaBuscar = new JTable(dtmSalas);
-        spBuscar    = new JScrollPane(tablaBuscar);
-
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panelBotones.setBackground(Color.red);
-        btnRegresar = new JButton("Regresar");
-        panelBotones.add(btnRegresar);
-
-        p.add(panelBuscador, BorderLayout.NORTH);
-        p.add(spBuscar,      BorderLayout.CENTER);
-        p.add(panelBotones,  BorderLayout.SOUTH);
+        btnRegresar = Theme.ghostButton("← Regresar");
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        barra.setBackground(Theme.SURFACE);
+        barra.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
+        barra.add(btnRegresar);
+        p.add(barra, BorderLayout.SOUTH);
         return p;
     }
 
-    // ----- Modos ---------------------------------------------------------
+    // ── Modes ─────────────────────────────────────────────────────────────────
+
     public void activarModoRegistro() {
         numSalaEditando = -1;
-        lblTituloPanelAgregar.setText("Registrar Sala");
+        lblTituloPanelAgregar.setText("Registrar sala");
         limpiarFormulario();
         card.show(this, "REGISTRAR");
     }
 
     public void activarModoEdicion(int numSala, boolean disponible) {
         numSalaEditando = numSala;
-
         txtNumSala.setText(String.valueOf(numSala));
-        txtNumSala.setForeground(Color.BLACK);
-
+        txtNumSala.setForeground(Theme.TEXT_PRIMARY);
         chkDisponible.setSelected(disponible);
-
-        lblTituloPanelAgregar.setText("Editar Sala");
+        lblTituloPanelAgregar.setText("Editar sala");
         card.show(this, "REGISTRAR");
     }
 
@@ -196,66 +253,32 @@ public class PanelSalas extends JPanel {
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
     }
-    
+
+    // ── Form data ─────────────────────────────────────────────────────────────
+
     public Sala getFormData() {
         int numSala = 0;
-
-        try {
-            numSala = Integer.parseInt(txtNumSala.getText().trim());
-        } catch (NumberFormatException ignored) {}
-
+        try { numSala = Integer.parseInt(txtNumSala.getText().trim()); }
+        catch (NumberFormatException ignored) {}
         return new Sala(numSala, ASIENTOS_FIJOS, chkDisponible.isSelected());
     }
 
     public void limpiarFormulario() {
-        txtNumSala.setText("Numero de sala");
-        txtNumSala.setForeground(Color.GRAY);        
+        txtNumSala.setText("Número de sala");
+        txtNumSala.setForeground(Theme.TEXT_MUTED);
+        txtNumSala.setBackground(Theme.SURFACE_ALT);
         chkDisponible.setSelected(true);
     }
 
-    // ----- Helpers -------------------------------------------------------
-    private JButton crearBoton(String texto, String iconPath) {
-        ImageIcon icon = new ImageIcon(getClass().getResource("/resources/" + iconPath));
-        JButton b = new JButton(texto, icon);
-        b.setBackground(Color.red);
-        b.setForeground(Color.white);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.setMaximumSize(new Dimension(200, b.getPreferredSize().height));
-        b.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) { b.setBackground(Color.blue); }
-            @Override public void mouseExited(MouseEvent e)  { b.setBackground(Color.red);  }
-        });
-        return b;
-    }
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private JLabel crearLabel(String text) {
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        return lbl;
-    }
-
-    private JTextField crearTxt(String placeholder, int length) {
-        JTextField txt = new JTextField(placeholder, length);
-        txt.setForeground(Color.GRAY);
-        txt.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (txt.getText().equals(placeholder)) {
-                    txt.setText("");
-                    txt.setForeground(Color.BLACK);
-                }
-            }
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (txt.getText().isEmpty()) {
-                    txt.setText(placeholder);
-                    txt.setForeground(Color.GRAY);
-                }
-            }
-        });
-        return txt;
+    private JPanel fieldRow(String label, JTextField f) {
+        JPanel r = new JPanel(new BorderLayout(0, 4));
+        r.setBackground(Theme.SURFACE);
+        r.setAlignmentX(Component.LEFT_ALIGNMENT);
+        r.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        r.add(Theme.fieldLabel(label), BorderLayout.NORTH);
+        r.add(f, BorderLayout.CENTER);
+        return r;
     }
 }

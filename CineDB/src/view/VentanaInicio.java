@@ -1,44 +1,26 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.UIManager;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
 
 public class VentanaInicio extends JFrame {
-    public PanelClientes panelClientes;
-    public PanelPeliculas panelPeliculas;
+
+    public PanelClientes   panelClientes;
+    public PanelPeliculas  panelPeliculas;
     public PanelMembresias panelMembresias;
-    public PanelSalas panelSalas;
-    public PanelFunciones panelFunciones;
-    public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
-    public JButton btnClientes, btnPeliculas, btnFunciones, btnCartelera,
-            btnSalas, btnMembresias, btnVender, btnSalir, btnCrear, btnLeer,
-            btnActualizar, btnEliminar;
-    public JLabel lblTitulo;
-    public JTextField txt1;
+    public PanelSalas      panelSalas;
+    public PanelFunciones  panelFunciones;
+
+    public JPanel    panelFondo, panelCentral, panelSideBar, panelHeader;
+    public JButton   btnClientes, btnPeliculas, btnFunciones,/* btnCartelera,*/
+                     btnSalas, btnMembresias, btnVender, btnSalir;
     public CardLayout card;
-    public DefaultTableModel dtmClientes;
-    public JTable tablaClientes;
+
+    // Track which nav button is active
+    private JButton navActivo;
 
     public VentanaInicio() {
         configFrame();
@@ -49,17 +31,22 @@ public class VentanaInicio extends JFrame {
         setLayout(new BorderLayout());
         setTitle("Cinefan");
         setSize(1200, 700);
-        setIconImage(new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png")).getImage());        
+        try {
+            setIconImage(new ImageIcon(
+                getClass().getResource("/resources/entrada-de-cine.png")).getImage());
+        } catch (Exception ignored) {}
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setLocationRelativeTo(null);
     }
 
     private void initComponents() {
         panelFondo   = new JPanel(new BorderLayout());
-        panelHeader  = crearPanelHeader();
-        panelCentral = crearPanelCentral();
+        panelFondo.setBackground(Theme.CONTENT_BG);
+
+        panelHeader  = crearHeader();
         panelSideBar = crearSideBar();
+        panelCentral = crearPanelCentral();
 
         panelFondo.add(panelHeader,  BorderLayout.NORTH);
         panelFondo.add(panelSideBar, BorderLayout.WEST);
@@ -67,34 +54,52 @@ public class VentanaInicio extends JFrame {
         add(panelFondo);
     }
 
-    private JPanel crearPanelHeader() {
-        JPanel p = new JPanel(new FlowLayout());
-        p.setPreferredSize(new Dimension(0, 130));
-        p.setBackground(Color.red);
+    // ── Header ────────────────────────────────────────────────────────────────
 
-        JLabel imgLogo = new JLabel(resizeImage("entrada-de-cine.png", 124, 124), SwingConstants.CENTER);
-        JLabel titulo  = crearLabel("Cinefan");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 52));
-        titulo.setForeground(Color.white);
+    private JPanel crearHeader() {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 18, 0));
+        p.setPreferredSize(new Dimension(0, 60));
+        p.setBackground(Theme.HEADER_BG);
 
-        p.add(imgLogo);
-        p.add(titulo);
+        // Try to load icon
+        try {
+            ImageIcon ico = new ImageIcon(
+                getClass().getResource("/resources/entrada-de-cine.png"));
+            Image img = ico.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            JLabel iconLbl = new JLabel(new ImageIcon(img));
+            iconLbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
+            p.add(iconLbl);
+        } catch (Exception ignored) {}
+
+        // "Cine" + "fan" in two colors
+        JLabel part1 = new JLabel("Cine");
+        part1.setFont(Theme.FONT_HEADER);
+        part1.setForeground(Color.WHITE);
+        JLabel part2 = new JLabel("fan");
+        part2.setFont(Theme.FONT_HEADER);
+        part2.setForeground(Theme.RED_PRIMARY);
+
+        p.add(part1);
+        p.add(part2);
         return p;
     }
 
+    // ── Sidebar ───────────────────────────────────────────────────────────────
+
     private JPanel crearSideBar() {
         JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBackground(Color.orange);
+        p.setLayout(new GridLayout(0,1,0,2));
+        p.setBackground(Theme.SIDEBAR_BG);
+        p.setPreferredSize(new Dimension(220, 0));
+        p.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        btnClientes  = crearBotonSideBar("Clientes",   "anadir-contacto.png");
-        btnPeliculas = crearBotonSideBar("Peliculas",  "carrete-de-pelicula.png");
-        btnFunciones = crearBotonSideBar("Funciones",  "tiempo-de-la-funcion.png");
-        btnCartelera = crearBotonSideBar("Carteleras", "pelicula.png");
-        btnSalas     = crearBotonSideBar("Sala",       "cine.png");
-        btnMembresias = crearBotonSideBar("Membresias","anadir-contacto.png");
-        btnVender    = crearBotonSideBar("Vender",     "entradas.png");
-        btnSalir     = crearBotonSideBar("Salir",      "salida.png");
+        btnClientes   = crearNavBtn("Clientes",   "anadir-contacto.png");
+        btnPeliculas  = crearNavBtn("Películas",  "carrete-de-pelicula.png");
+        btnFunciones  = crearNavBtn("Funciones",  "tiempo-de-la-funcion.png");
+        //btnCartelera =  crearNavBtn("Carteleras", "pelicula.png");
+        btnSalas      = crearNavBtn("Salas",      "cine.png");
+        btnMembresias = crearNavBtn("Membresías", "anadir-contacto.png");
+        btnVender     = crearNavBtn("Vender",     "entradas.png");
 
         p.add(btnClientes);
         p.add(btnPeliculas);
@@ -103,24 +108,116 @@ public class VentanaInicio extends JFrame {
         p.add(btnSalas);
         p.add(btnMembresias);
         p.add(btnVender);
-        p.add(Box.createVerticalStrut(213));
-        JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-        separator.setForeground(Color.white);
-        p.add(separator);
-        p.add(Box.createVerticalStrut(8));
+        p.add(Box.createVerticalStrut(20));
+        // Divider
+        JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
+        sep.setForeground(new Color(255, 255, 255, 25));
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        p.add(sep);
+        p.add(Box.createVerticalStrut(10));
+
+        btnSalir = crearNavBtn("Salir", "salida.png");
+        btnSalir.setForeground(Theme.RED_PRIMARY);
         p.add(btnSalir);
+
+        // Default active: clientes
+        setNavActive(btnClientes);
         return p;
     }
+
+    private JButton crearNavBtn(String texto, String iconPath) {
+    JButton b = new JButton(texto);
+
+    b.setFont(Theme.FONT_NAV);
+    b.setForeground(new Color(160, 160, 190));
+    b.setBackground(Theme.SIDEBAR_BG);
+
+    b.setBorderPainted(false);
+    b.setFocusPainted(false);
+    b.setOpaque(true);
+    b.setContentAreaFilled(true);
+    b.setDoubleBuffered(true);
+
+    b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+    b.setHorizontalAlignment(SwingConstants.LEADING);
+    b.setIconTextGap(14);
+
+    Dimension btnSize = new Dimension(220, 60);
+    b.setPreferredSize(btnSize);
+    b.setMinimumSize(btnSize);
+    b.setMaximumSize(btnSize);
+
+    b.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createMatteBorder(0, 3, 0, 0, Theme.SIDEBAR_BG),
+        BorderFactory.createEmptyBorder(10, 18, 10, 18)//
+    ));
+
+    try {
+        ImageIcon ico = new ImageIcon(
+            getClass().getResource("/resources/" + iconPath));
+
+        Image img = ico.getImage()
+            .getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+
+        b.setIcon(new ImageIcon(img));
+
+    } catch (Exception ignored) {}
+
+    b.addMouseListener(new MouseAdapter() {
+        public void mouseEntered(MouseEvent e) {
+            if (b != navActivo) {
+                b.setBackground(new Color(45,45,55));
+                b.setForeground(new Color(200,200,220));
+                b.repaint();
+                
+                SwingUtilities.getWindowAncestor(b).repaint();
+            }
+        }
+
+        public void mouseExited(MouseEvent e) {
+            if (b != navActivo) {
+                b.setBackground(Theme.SIDEBAR_BG);
+                b.repaint();
+            }
+        }
+    });
+
+    return b;
+}
+
+    public void setNavActive(JButton btn) {
+        if (navActivo != null) {
+            navActivo.setBackground(Theme.SIDEBAR_BG);
+            navActivo.setForeground(new Color(160, 160, 190));
+
+            navActivo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 3, 0, 0, Theme.SIDEBAR_BG),
+                BorderFactory.createEmptyBorder(0, 14, 0, 14)
+            ));
+        }
+        
+        navActivo = btn;
+        btn.setBackground(new Color(40, 40, 60));
+        btn.setForeground(Theme.RED_PRIMARY);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 4, 0, 0, Theme.RED_PRIMARY),
+            BorderFactory.createEmptyBorder(0, 14, 0, 14)
+        ));
+    }
+
+    // ── Central panel ─────────────────────────────────────────────────────────
 
     private JPanel crearPanelCentral() {
         card = new CardLayout();
         JPanel p = new JPanel(card);
+        p.setBackground(Theme.CONTENT_BG);
 
-        panelClientes  = new PanelClientes();
-        panelPeliculas = new PanelPeliculas();
+        panelClientes   = new PanelClientes();
+        panelPeliculas  = new PanelPeliculas();
         panelMembresias = new PanelMembresias();
-        panelSalas     = new PanelSalas();
-        panelFunciones = new PanelFunciones();
+        panelSalas      = new PanelSalas();
+        panelFunciones  = new PanelFunciones();
 
         p.add(panelClientes,   "CLIENTES");
         p.add(panelPeliculas,  "PELICULAS");
@@ -132,40 +229,22 @@ public class VentanaInicio extends JFrame {
         return p;
     }
 
-    private JButton crearBotonSideBar(String texto, String pathIcon) {
-        JButton b = new JButton(texto, new ImageIcon(getClass().getResource("/resources/" + pathIcon)));
-        b.setBackground(Color.orange);
-        b.setForeground(Color.white);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.setHorizontalAlignment(SwingConstants.LEFT);
-        b.setIconTextGap(10);
-        b.setMaximumSize(new Dimension(Integer.MAX_VALUE, b.getPreferredSize().height));
-        b.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) { b.setBackground(Color.blue);   }
-            @Override public void mouseExited(MouseEvent e)  { b.setBackground(Color.orange); }
-        });
-        return b;
-    }
-
-    private JLabel crearLabel(String texto) {
-        JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        return lbl;
-    }
-
-    private ImageIcon resizeImage(String path, int width, int height) {
-        ImageIcon icon = new ImageIcon(getClass().getResource("/resources/" + path));
-        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(img);
-    }
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     public void botonSalir() {
-        int result = JOptionPane.showConfirmDialog(panelFondo, "Estas seguro de salir?", "Salir",
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (result == JOptionPane.NO_OPTION) return;
-        System.exit(0);
+        UIManager.put("OptionPane.background", Theme.SURFACE);
+        UIManager.put("Panel.background", Theme.SURFACE);
+
+        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 16));
+
+        UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 12));
+
+        UIManager.put("Button.background", Theme.RED_PRIMARY);
+        UIManager.put("Button.foreground", Color.WHITE);
+    
+        int r = JOptionPane.showConfirmDialog(
+            panelFondo, "¿Estás seguro de que quieres salir?",
+            "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (r == JOptionPane.YES_OPTION) System.exit(0);
     }
 }

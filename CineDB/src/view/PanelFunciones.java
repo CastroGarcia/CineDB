@@ -5,189 +5,219 @@ import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import models.Funcion;
 import models.Movie;
 
 public class PanelFunciones extends JPanel {
-    
+
     public DefaultTableModel dtmFunciones;
-    public JTable tablaFunciones;
-    public JButton btnNueva, btnEliminar;
+    public JTable            tablaFunciones;
+    public JButton           btnNueva, btnEliminar;
 
     public JComboBox<MovieItem> cmbPelicula;
-    public JComboBox<Integer> cmbSala;
-    public JTextField txtHoraInicio;   // HH:mm
-    public JButton btnGenerarPreview, btnGuardar, btnCancelarForm;
+    public JComboBox<Integer>   cmbSala;
+    public JTextField           txtHoraInicio;
+    public JButton              btnGenerarPreview, btnGuardar, btnCancelarForm;
 
     public DefaultTableModel dtmPreview;
-    public JTable tablaPreview;
+    public JTable            tablaPreview;
 
     public CardLayout card;
-    private JPanel panelPrincipal, panelNueva;
 
-    public PanelFunciones() {
-        initComponents();
-    }
+    public PanelFunciones() { initComponents(); }
 
     private void initComponents() {
         card = new CardLayout();
         setLayout(card);
-        panelPrincipal = crearPanelPrincipal();
-        panelNueva     = crearPanelNueva();
-        add(panelPrincipal, "PRINCIPAL");
-        add(panelNueva,     "NUEVA");
+        setBackground(Theme.CONTENT_BG);
+        add(crearPanelPrincipal(), "PRINCIPAL");
+        add(crearPanelNueva(),     "NUEVA");
         card.show(this, "PRINCIPAL");
     }
 
+    // ── Principal ─────────────────────────────────────────────────────────────
+
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(Color.WHITE);
+        p.setBackground(Theme.CONTENT_BG);
 
-        // Title
-        JLabel titulo = new JLabel("FUNCIONES");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 42));
-        titulo.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Theme.SURFACE);
+        header.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(16, 20, 16, 20)
+        ));
+        header.add(Theme.titleLabel("Funciones"), BorderLayout.WEST);
+        p.add(header, BorderLayout.NORTH);
 
-        // Table
-        String[] cols = {"ID", "Pelicula", "Sala", "Hora Inicio", "Hora Fin"};
+        String[] cols = { "ID", "Película", "Sala", "Hora inicio", "Hora fin" };
         dtmFunciones = new DefaultTableModel(null, cols) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
-        tablaFunciones = new JTable(dtmFunciones);
-        tablaFunciones.setRowHeight(26);
-        tablaFunciones.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        JScrollPane scroll = new JScrollPane(tablaFunciones);
+        tablaFunciones = PanelClientes.estilizarTabla(new JTable(dtmFunciones));
+        tablaFunciones.setRowHeight(36);
 
-        // Buttons
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        btnPanel.setBackground(Color.RED);
-        btnNueva    = crearBoton("Nueva Funcion", "tiempo-de-la-funcion.png");
-        btnEliminar = crearBoton("Eliminar",      "basura.png");
-        btnPanel.add(btnNueva);
-        btnPanel.add(btnEliminar);
+        JPanel body = new JPanel(new BorderLayout());
+        body.setBackground(Theme.CONTENT_BG);
+        body.setBorder(BorderFactory.createEmptyBorder(0, 20, 16, 20));
+        body.add(PanelClientes.crearScrollPane(tablaFunciones), BorderLayout.CENTER);
+        p.add(body, BorderLayout.CENTER);
 
-        p.add(titulo,  BorderLayout.NORTH);
-        p.add(scroll,  BorderLayout.CENTER);
-        p.add(btnPanel,BorderLayout.SOUTH);
+        btnNueva    = Theme.primaryButton("+ Nueva función");
+        btnEliminar = Theme.dangerButton("Eliminar");
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        barra.setBackground(Theme.SURFACE);
+        barra.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
+        barra.add(btnEliminar);
+        barra.add(btnNueva);
+        p.add(barra, BorderLayout.SOUTH);
         return p;
     }
+
+    // ── Nueva función ─────────────────────────────────────────────────────────
 
     private JPanel crearPanelNueva() {
-        JPanel p = new JPanel(new BorderLayout(10, 10));
-        p.setBackground(Color.WHITE);
-        p.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        JPanel p = new JPanel(new BorderLayout(0, 0));
+        p.setBackground(Theme.CONTENT_BG);
 
-        JLabel titulo = new JLabel("Nueva Funcion");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        // Header
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Theme.SURFACE);
+        header.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(16, 20, 16, 20)
+        ));
+        header.add(Theme.titleLabel("Nueva función"), BorderLayout.WEST);
+        p.add(header, BorderLayout.NORTH);
 
-        JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
+        // Scrollable content
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBackground(Theme.CONTENT_BG);
+        content.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
+
+        // Form card
+        JPanel formCard = new JPanel(new GridBagLayout());
+        formCard.setBackground(Theme.SURFACE);
+        formCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Theme.BORDER, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        formCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+        formCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 12, 12);
 
-        cmbPelicula  = new JComboBox<>();
-        cmbSala      = new JComboBox<>();
+        // Row 1 labels
+        gbc.gridy = 0; gbc.weightx = 1;
+        gbc.gridx = 0; formCard.add(Theme.fieldLabel("Película"), gbc);
+        gbc.gridx = 1; formCard.add(Theme.fieldLabel("Sala"), gbc);
+        gbc.gridx = 2; gbc.insets = new Insets(0, 0, 12, 0);
+        formCard.add(Theme.fieldLabel("Hora de inicio (HH:mm)"), gbc);
+
+        // Row 2 fields
+        cmbPelicula   = new JComboBox<>();
+        cmbSala       = new JComboBox<>();
         txtHoraInicio = new JTextField("08:00", 8);
-        txtHoraInicio.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        styleCombo(cmbPelicula);
+        styleCombo(cmbSala);
+        styleField(txtHoraInicio);
 
-        btnGenerarPreview = new JButton("Calcular Horario");
-        btnGenerarPreview.setBackground(new Color(220, 50, 50));
-        btnGenerarPreview.setForeground(Color.WHITE);
-        btnGenerarPreview.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnGenerarPreview.setBorderPainted(false);
-        btnGenerarPreview.setFocusPainted(false);
-        btnGenerarPreview.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        gbc.gridy = 1; gbc.insets = new Insets(4, 0, 0, 12);
+        gbc.gridx = 0; formCard.add(cmbPelicula,   gbc);
+        gbc.gridx = 1; formCard.add(cmbSala,        gbc);
+        gbc.gridx = 2; gbc.insets = new Insets(4, 0, 0, 0);
+        formCard.add(txtHoraInicio, gbc);
 
-        int row = 0;
-        gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 1; gbc.weightx = 0;
-        form.add(label("Pelicula:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1;
-        form.add(cmbPelicula, gbc);
+        // Calc button
+        gbc.gridy = 2; gbc.gridx = 0; gbc.gridwidth = 3;
+        gbc.insets = new Insets(16, 0, 0, 0);
+        btnGenerarPreview = Theme.ghostButton("Calcular horario →");
+        formCard.add(btnGenerarPreview, gbc);
 
-        row++;
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        form.add(label("Sala:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1;
-        form.add(cmbSala, gbc);
+        content.add(formCard);
+        content.add(Box.createVerticalStrut(16));
 
-        row++;
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        form.add(label("Hora de inicio (HH:mm):"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1;
-        form.add(txtHoraInicio, gbc);
+        // Preview card
+        JPanel previewCard = new JPanel(new BorderLayout(0, 8));
+        previewCard.setBackground(Theme.SURFACE);
+        previewCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+        previewCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-        row++;
-        gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
-        form.add(btnGenerarPreview, gbc);
+        JPanel previewHeader = new JPanel(new BorderLayout());
+        previewHeader.setBackground(Theme.TABLE_HEADER);
+        previewHeader.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(10, 14, 10, 14)
+        ));
+        JLabel previewTitle = Theme.fieldLabel("Horario generado (preview)");
+        previewTitle.setForeground(Theme.TEXT_SECONDARY);
+        previewHeader.add(previewTitle, BorderLayout.WEST);
 
-        String[] previewCols = {"Pelicula", "Hora Inicio", "Hora Fin", "Duracion"};
+        String[] previewCols = { "Película", "Hora inicio", "Hora fin", "Duración" };
         dtmPreview = new DefaultTableModel(null, previewCols) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
-        tablaPreview = new JTable(dtmPreview);
+        tablaPreview = PanelClientes.estilizarTabla(new JTable(dtmPreview));
         tablaPreview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tablaPreview.setRowHeight(24);
-        tablaPreview.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
-        JScrollPane scrollPreview = new JScrollPane(tablaPreview);
-        scrollPreview.setPreferredSize(new Dimension(0, 180));
+        Theme.centerTable(tablaFunciones);
 
-        JPanel previewPanel = new JPanel(new BorderLayout(0, 5));
-        previewPanel.setBackground(Color.WHITE);
-        TitledBorder border = BorderFactory.createTitledBorder("Horario generado (preview)");
-        border.setTitleFont(new Font("Segoe UI", Font.BOLD, 13));
-        previewPanel.setBorder(border);
-        previewPanel.add(scrollPreview, BorderLayout.CENTER);
+        previewCard.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
+        previewCard.add(previewHeader, BorderLayout.NORTH);
+        previewCard.add(new JScrollPane(tablaPreview) {{
+            setBorder(BorderFactory.createEmptyBorder());
+            getViewport().setBackground(Theme.SURFACE);
+            setPreferredSize(new Dimension(0, 150));
+        }}, BorderLayout.CENTER);
 
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        footer.setBackground(Color.WHITE);
-        btnGuardar     = new JButton("Guardar Funcion");
-        btnCancelarForm = new JButton("Cancelar");
-        styleBtn(btnGuardar,      new Color(220, 50, 50));
-        styleBtn(btnCancelarForm, new Color(100, 100, 100));
-        footer.add(btnGuardar);
+        content.add(previewCard);
+
+        JScrollPane scrollContent = new JScrollPane(content);
+        scrollContent.setBorder(BorderFactory.createEmptyBorder());
+        scrollContent.getViewport().setBackground(Theme.CONTENT_BG);
+        p.add(scrollContent, BorderLayout.CENTER);
+
+        // Footer
+        btnGuardar      = Theme.primaryButton("Guardar función");
+        btnCancelarForm = Theme.ghostButton("Cancelar");
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        footer.setBackground(Theme.SURFACE);
+        footer.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
         footer.add(btnCancelarForm);
-        
-        JPanel top = new JPanel(new BorderLayout(0, 12));
-        top.setBackground(Color.WHITE);
-        top.add(titulo, BorderLayout.NORTH);
-        top.add(form,   BorderLayout.CENTER);
+        footer.add(btnGuardar);
+        p.add(footer, BorderLayout.SOUTH);
 
-        p.add(top,          BorderLayout.NORTH);
-        p.add(previewPanel, BorderLayout.CENTER);
-        p.add(footer,       BorderLayout.SOUTH);
         return p;
     }
+
+    // ── Public API ────────────────────────────────────────────────────────────
 
     public void cargarPeliculas(List<Movie> movies) {
         cmbPelicula.removeAllItems();
-        for (Movie m : movies) {
-            cmbPelicula.addItem(new MovieItem(m));
-        }
+        for (Movie m : movies) cmbPelicula.addItem(new MovieItem(m));
     }
-    
-    public void cargarSalas(List<Integer> numSalas) {
+
+    public void cargarSalas(List<Integer> nums) {
         cmbSala.removeAllItems();
-        for (int n : numSalas) {
-            cmbSala.addItem(n);
-        }
+        for (int n : nums) cmbSala.addItem(n);
     }
-    
+
     public void mostrarFunciones(List<Funcion> funciones) {
         dtmFunciones.setRowCount(0);
         for (Funcion f : funciones) {
-            dtmFunciones.addRow(new Object[]{
+            dtmFunciones.addRow(new Object[] {
                 f.getId(),
                 f.getNombrePelicula(),
-                f.getNumSala(),
+                "Sala " + f.getNumSala(),
                 f.getHoraInicio().toString().substring(0, 5),
                 f.getHoraFin().toString().substring(0, 5)
             });
         }
     }
-    
+
     public Movie getSelectedMovie() {
         MovieItem item = (MovieItem) cmbPelicula.getSelectedItem();
         return item == null ? null : item.movie;
@@ -199,49 +229,31 @@ public class PanelFunciones extends JPanel {
     }
 
     public void irAPrincipal() { card.show(this, "PRINCIPAL"); }
-    public void irANueva()     {
-        dtmPreview.setRowCount(0);
-        card.show(this, "NUEVA");
-    }
-    
-    private JLabel label(String text) {
-        JLabel l = new JLabel(text);
-        l.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        return l;
+    public void irANueva()     { dtmPreview.setRowCount(0); card.show(this, "NUEVA"); }
+
+    // ── Styling helpers ───────────────────────────────────────────────────────
+
+    private void styleCombo(JComboBox<?> c) {
+        c.setFont(Theme.FONT_BODY);
+        c.setBackground(Theme.SURFACE_ALT);
+        c.setBorder(Theme.fieldBorder());
+        c.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
     }
 
-    private void styleBtn(JButton b, Color bg) {
-        b.setBackground(bg);
-        b.setForeground(Color.WHITE);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.setBorder(BorderFactory.createEmptyBorder(7, 16, 7, 16));
+    private void styleField(JTextField f) {
+        f.setFont(Theme.FONT_BODY);
+        f.setBackground(Theme.SURFACE_ALT);
+        f.setBorder(Theme.fieldBorder());
+        f.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
     }
 
-    private JButton crearBoton(String texto, String iconPath) {
-        ImageIcon icon = new ImageIcon(getClass().getResource("/resources/" + iconPath));
-        JButton b = new JButton(texto, icon);
-        b.setBackground(Color.RED);
-        b.setForeground(Color.WHITE);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) { b.setBackground(Color.BLUE); }
-            @Override public void mouseExited(MouseEvent e)  { b.setBackground(Color.RED);  }
-        });
-        return b;
-    }
+    // ── Inner class ───────────────────────────────────────────────────────────
 
     public static class MovieItem {
         public final Movie movie;
         MovieItem(Movie m) { this.movie = m; }
         @Override public String toString() {
-            return m().getName() + "  (" + m().getDuration() + ")";
+            return movie.getName() + "  (" + movie.getDuration() + ")";
         }
-        private Movie m() { return movie; }
     }
 }
