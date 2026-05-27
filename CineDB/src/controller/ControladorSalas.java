@@ -104,7 +104,7 @@ public class ControladorSalas {
             return;
         }
         int numSala     = (int)     view.dtmSalas.getValueAt(fila, 0);        
-        boolean disp    = (boolean) view.dtmSalas.getValueAt(fila, 3);
+        boolean disp    = (boolean) view.dtmSalas.getValueAt(fila, 2);
         view.activarModoEdicion(numSala, disp);
     }
 
@@ -209,7 +209,11 @@ public class ControladorSalas {
             return;
         }
         for (Sala s : results) {
-            view.dtmSalas.addRow(new Object[]{ s.getNumSala(), s.isDisponible() });
+            view.dtmSalas.addRow(new Object[]{
+                s.getNumSala(),
+                s.getAsientos(),
+                s.isDisponible()
+            });
         }
     }
 
@@ -218,7 +222,11 @@ public class ControladorSalas {
         SalaDAO dao = new SalaDAO(conn, new Sala());
         List<Sala> salas = dao.getAllSalas();
         for (Sala s : salas) {
-            view.dtmSalas.addRow(new Object[]{ s.getNumSala(), s.isDisponible() });
+            view.dtmSalas.addRow(new Object[]{
+    s.getNumSala(),
+    s.getAsientos(),
+    s.isDisponible()
+});
         }
     }
     

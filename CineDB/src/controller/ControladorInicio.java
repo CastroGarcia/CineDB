@@ -30,7 +30,7 @@ public class ControladorInicio {
         view.btnClientes.addActionListener(e  -> view.card.show(view.panelCentral, "CLIENTES"));
         view.btnPeliculas.addActionListener(e -> view.card.show(view.panelCentral, "PELICULAS"));
         view.btnFunciones.addActionListener(e -> view.card.show(view.panelCentral, "FUNCIONES"));
-        view.btnCartelera.addActionListener(e -> view.card.show(view.panelCentral, "CARTELERAS"));
+        //view.btnCartelera.addActionListener(e -> view.card.show(view.panelCentral, "CARTELERAS"));
         view.btnSalas.addActionListener(e -> {
             view.card.show(view.panelCentral, "SALAS");
             view.panelCentral.revalidate();

@@ -1,293 +1,237 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.table.*;
 import models.Movie;
 
-public class PanelPeliculas extends JPanel{
-    private JPanel panelPrincipal, panelRegistrar, panelBuscar;
+public class PanelPeliculas extends JPanel {
+
     public DefaultTableModel dtmPeliculas;
-    public JTable tablaPeliculas, tablaBuscar;
-    private JScrollPane spPrincipal, spBuscar;
-    public JButton btnCrear, btnLeer, btnActualizar, btnEliminar, btnGuardar, 
-            btnCancelar, btnBuscar, btnRegresar;
-    public JTextField txtNombre, txtGenero, txtDuracion, txtFormato, txtIdioma,
-            txtBuscador;
-    public CardLayout card;
-    public JLabel lblTituloPanelAgregar;
-    String[] cols = { "ID", "Nombre", "Genero", "Duracion", "Formato", "Idioma" };
-    public int idEditando = -1;
-    
-    public PanelPeliculas() {                        
-        initComponents();       
-    }
-            
+    public JTable            tablaPeliculas, tablaBuscar;
+    public JButton           btnCrear, btnLeer, btnActualizar, btnEliminar,
+                             btnGuardar, btnCancelar, btnBuscar, btnRegresar;
+    public JTextField        txtNombre, txtGenero, txtDuracion, txtFormato,
+                             txtIdioma, txtBuscador;
+    public CardLayout        card;
+    public JLabel            lblTituloPanelAgregar;
+    public int               idEditando = -1;
+
+    private static final String[] COLS =
+        { "ID", "Nombre", "Género", "Duración", "Formato", "Idioma" };
+
+    public PanelPeliculas() { initComponents(); }
+
     private void initComponents() {
-        // Construir Interfaz
         card = new CardLayout();
         setLayout(card);
-        panelPrincipal = crearPanelPrincipal();
-        panelRegistrar = crearPanelAgregar();
-        panelBuscar = crearPanelBuscar();
-        
-        add(panelPrincipal, "PRINCIPAL");
-        add(panelRegistrar, "REGISTRAR");
-        add(panelBuscar, "BUSCAR");
-        
+        setBackground(Theme.CONTENT_BG);
+
+        add(crearPanelPrincipal(), "PRINCIPAL");
+        add(crearPanelAgregar(),   "REGISTRAR");
+        add(crearPanelBuscar(),    "BUSCAR");
         card.show(this, "PRINCIPAL");
-    }        
-    
-    //----- CREAR PANELES PARA LAS FUNCIONES ---------------------------
+    }
+
+    // ── Principal ─────────────────────────────────────────────────────────────
+
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(254, 254, 254));
-        
-        JLabel titulo = new JLabel("PELICULAS");
-        titulo.setFont(new Font("Segeo UI", Font.BOLD, 42));        
-        titulo.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 0));
-                
-        dtmPeliculas = new DefaultTableModel(null, cols) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // La tabla no es editable directamente
-            }
+        p.setBackground(Theme.CONTENT_BG);
+
+        p.add(crearHeader("Películas"), BorderLayout.NORTH);
+
+        dtmPeliculas = new DefaultTableModel(null, COLS) {
+            public boolean isCellEditable(int r, int c) { return false; }
         };
-        tablaPeliculas = new JTable(dtmPeliculas);
-        spPrincipal = new JScrollPane(tablaPeliculas);
-        
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panelBotones.setBackground(Color.red);
-        btnCrear = crearBoton("Nuevo", "registro.png");
-        btnLeer = crearBoton("Buscar", "consulta.png");
-        btnActualizar = crearBoton("Editar", "editar.png");
-        btnEliminar = crearBoton("Eliminar", "basura.png");
-        panelBotones.add(btnCrear);
-        panelBotones.add(btnLeer);
-        panelBotones.add(btnActualizar);
-        panelBotones.add(btnEliminar);
-        
-        p.add(titulo, BorderLayout.NORTH);
-        p.add(spPrincipal, BorderLayout.CENTER);
-        p.add(panelBotones, BorderLayout.SOUTH);
-        
+        tablaPeliculas = PanelClientes.estilizarTabla(new JTable(dtmPeliculas));
+        Theme.centerTable(tablaPeliculas);
+
+        JPanel body = new JPanel(new BorderLayout());
+        body.setBackground(Theme.CONTENT_BG);
+        body.setBorder(BorderFactory.createEmptyBorder(0, 20, 16, 20));
+        body.add(PanelClientes.crearScrollPane(tablaPeliculas), BorderLayout.CENTER);
+        p.add(body, BorderLayout.CENTER);
+
+        btnCrear      = Theme.primaryButton("+ Nueva");
+        btnLeer       = Theme.ghostButton("Buscar");
+        btnActualizar = Theme.ghostButton("Editar");
+        btnEliminar   = Theme.dangerButton("Eliminar");
+        p.add(crearBarra(btnCrear, btnLeer, btnActualizar, btnEliminar), BorderLayout.SOUTH);
         return p;
-    }    
-    
-    private JPanel crearPanelAgregar() {                
-        JPanel fondo = new JPanel(new BorderLayout());
-                        
-        JPanel formulario = new JPanel();
-        formulario.setLayout(new BoxLayout(formulario, BoxLayout.Y_AXIS));
-        lblTituloPanelAgregar = new JLabel();
-        lblTituloPanelAgregar.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        JLabel lbl1 = crearLabel("Nombre:");
-        JLabel lbl2 = crearLabel("Genero:");
-        JLabel lbl3 = crearLabel("Duracion:");
-        JLabel lbl4 = crearLabel("Formato:");
-        JLabel lbl5 = crearLabel("Idioma:");                
-        txtNombre = crearTxt("Nombre de la pelicula", 100);
-        txtGenero = crearTxt("Genero de la pelicula", 100);
-        txtDuracion = crearTxt("Duracion de la pelicula (hh:mm:ss)", 100);
-        txtFormato = crearTxt("Formato pelicula(.mkv, .mp4)", 100);
-        txtIdioma = crearTxt("Idioma de la pelicula", 100);
-        
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));        
-        btnGuardar = crearBtn("Guardar");
-        btnCancelar = crearBtn("Cancelar");
-        
-        formulario.add(lblTituloPanelAgregar);
-        formulario.add(lbl1);
-        formulario.add(txtNombre);
-        formulario.add(lbl2);
-        formulario.add(txtGenero);
-        formulario.add(lbl3);
-        formulario.add(txtDuracion);
-        formulario.add(lbl4);
-        formulario.add(txtFormato);
-        formulario.add(lbl5);
-        formulario.add(txtIdioma);
-        panelBotones.add(btnGuardar);
-        panelBotones.add(btnCancelar);
-        
-        fondo.add(formulario, BorderLayout.CENTER);
-        fondo.add(panelBotones, BorderLayout.SOUTH);
-        
-        return fondo;
     }
-    
+
+    // ── Formulario ────────────────────────────────────────────────────────────
+
+    private JPanel crearPanelAgregar() {
+        JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(Theme.CONTENT_BG);
+        root.add(crearHeader("Películas"), BorderLayout.NORTH);
+
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Theme.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Theme.BORDER, 1),
+            BorderFactory.createEmptyBorder(24, 24, 24, 24)
+        ));
+
+        lblTituloPanelAgregar = Theme.sectionLabel("");
+        lblTituloPanelAgregar.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtNombre   = Theme.styledField("Título de la película", 30);
+        txtGenero   = Theme.styledField("Ej. Drama, Acción, Comedia", 30);
+        txtDuracion = Theme.styledField("hh:mm:ss", 30);
+        txtFormato  = Theme.styledField(".mkv, .mp4 ...", 30);
+        txtIdioma   = Theme.styledField("Español, Inglés ...", 30);
+
+        card.add(lblTituloPanelAgregar);
+        card.add(Box.createVerticalStrut(20));
+        card.add(row("Nombre",   txtNombre));
+        card.add(Box.createVerticalStrut(10));
+        card.add(row("Género",   txtGenero));
+        card.add(Box.createVerticalStrut(10));
+        card.add(row("Duración", txtDuracion));
+        card.add(Box.createVerticalStrut(10));
+        card.add(row("Formato",  txtFormato));
+        card.add(Box.createVerticalStrut(10));
+        card.add(row("Idioma",   txtIdioma));
+
+        JPanel wrap = new JPanel(new BorderLayout());
+        wrap.setBackground(Theme.CONTENT_BG);
+        wrap.setBorder(BorderFactory.createEmptyBorder(16, 20, 0, 20));
+        wrap.add(card, BorderLayout.NORTH);
+        root.add(wrap, BorderLayout.CENTER);
+
+        btnGuardar  = Theme.primaryButton("Guardar");
+        btnCancelar = Theme.ghostButton("Cancelar");
+        root.add(crearBarra(btnGuardar, btnCancelar), BorderLayout.SOUTH);
+        return root;
+    }
+
+    // ── Buscar ────────────────────────────────────────────────────────────────
+
     private JPanel crearPanelBuscar() {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(254, 254, 254));
-        
-        JPanel panelBuscador = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();      
-        gbc.insets = new Insets(5, 10, 5, 10);
-        JLabel titulo = new JLabel("Buscar Pelicula", SwingConstants.CENTER);
-        titulo.setFont(new Font("Segeo UI", Font.BOLD, 42));
-        txtBuscador = crearTxt("Buscar por nombre de pelicula", 50);
-        btnBuscar = crearBtn("Buscar");
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 3;                
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panelBuscador.add(titulo, gbc);        
-        gbc.gridy = 1; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.NONE;
-        panelBuscador.add(txtBuscador, gbc);
-        gbc.gridx = 2; gbc.gridwidth = 1;
-        panelBuscador.add(btnBuscar, gbc);
-        
-        tablaBuscar = new JTable(dtmPeliculas);
-        spBuscar = new JScrollPane(tablaBuscar);
-        
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panelBotones.setBackground(Color.red);
-        btnRegresar = crearBtn("Regresar");
-        panelBotones.add(btnRegresar);        
-        
-        p.add(panelBuscador, BorderLayout.NORTH);
-        p.add(spBuscar, BorderLayout.CENTER);
-        p.add(panelBotones, BorderLayout.SOUTH);
-        
+        p.setBackground(Theme.CONTENT_BG);
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.setBackground(Theme.SURFACE);
+        top.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(14, 20, 14, 20)
+        ));
+        top.add(Theme.titleLabel("Buscar película"), BorderLayout.NORTH);
+
+        txtBuscador = Theme.styledField("Buscar por nombre de película", 30);
+        btnBuscar   = Theme.primaryButton("Buscar");
+        JPanel sr = new JPanel(new BorderLayout(8, 0));
+        sr.setBackground(Theme.SURFACE);
+        sr.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        sr.add(txtBuscador, BorderLayout.CENTER);
+        sr.add(btnBuscar,   BorderLayout.EAST);
+        top.add(sr, BorderLayout.CENTER);
+        p.add(top, BorderLayout.NORTH);
+
+        tablaBuscar = PanelClientes.estilizarTabla(new JTable(dtmPeliculas));
+        JPanel body = new JPanel(new BorderLayout());
+        body.setBackground(Theme.CONTENT_BG);
+        body.setBorder(BorderFactory.createEmptyBorder(16, 20, 0, 20));
+        body.add(PanelClientes.crearScrollPane(tablaBuscar), BorderLayout.CENTER);
+        p.add(body, BorderLayout.CENTER);
+
+        btnRegresar = Theme.ghostButton("← Regresar");
+        p.add(crearBarra(btnRegresar), BorderLayout.SOUTH);
         return p;
     }
-    
-    //----- Modos (Registrar / Editar) -------------------------------
+
+    // ── Modes ─────────────────────────────────────────────────────────────────
+
     public void activarModoRegistro() {
         idEditando = -1;
-        lblTituloPanelAgregar.setText("Registrar Pelicula");
+        lblTituloPanelAgregar.setText("Registrar película");
         card.show(this, "REGISTRAR");
     }
 
     public void activarModoEdicion(int id, String nombre, String genero,
-                                    String duracion, String formato, String idioma) {
+                                   String duracion, String formato, String idioma) {
         idEditando = id;
-        txtNombre.setText(nombre);
-        txtGenero.setText(genero);
-        txtDuracion.setText(duracion);
-        txtFormato.setText(formato);
-        txtIdioma.setText(idioma);
-        lblTituloPanelAgregar.setText("Editar pelicula");
+        set(txtNombre,   nombre);
+        set(txtGenero,   genero);
+        set(txtDuracion, duracion);
+        set(txtFormato,  formato);
+        set(txtIdioma,   idioma);
+        lblTituloPanelAgregar.setText("Editar película");
         card.show(this, "REGISTRAR");
     }
 
-    public boolean esModoEdicion() {
-        return idEditando != -1;
-    }
-    
+    public boolean esModoEdicion() { return idEditando != -1; }
+
     public void cancelarAccion() {
         idEditando = -1;
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
     }
-    
-    //----- Metodos para los datos del formulario ----------------------
-    //Recupera los datos de los campos del formulario
+
+    // ── Form data ─────────────────────────────────────────────────────────────
+
     public Movie getFormData() {
         return new Movie(
-            txtNombre.getText(),
-            txtGenero.getText(),
-            txtDuracion.getText(),
-            txtFormato.getText(),
-            txtIdioma.getText()
+            txtNombre.getText(), txtGenero.getText(),
+            txtDuracion.getText(), txtFormato.getText(), txtIdioma.getText()
         );
     }
-    //Limpia los campos del formulario con los mensajes por defecto
-    public void limpiarFormulario() {
-        txtNombre.setText("Nombre de la pelicula");
-        txtGenero.setText("Genero de la pelicula");
-        txtDuracion.setText("Duracion de la pelicula (hh:mm:ss)");
-        txtFormato.setText("Formato pelicula(.mkv, .mp4)");
-        txtIdioma.setText("Idioma de la pelicula");
-    }
-    
-    //----- Helpers construcction --------------------------------------
-    private JButton crearBoton(String texto, String iconPath) {
-        ImageIcon icon = new ImageIcon(getClass().getResource("/resources/" + iconPath));
-        JButton b = new JButton(texto, icon);                        
-        b.setBackground(Color.red);
-        b.setForeground(Color.white);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b.setMaximumSize(new Dimension(
-            200,
-            b.getPreferredSize().height
-        ));
-        
-        b.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                b.setBackground(Color.blue);
-            }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                b.setBackground(Color.red);
-            }            
-        });
-        
-        return b;
+    public void limpiarFormulario() {
+        reset(txtNombre,   "Título de la película");
+        reset(txtGenero,   "Ej. Drama, Acción, Comedia");
+        reset(txtDuracion, "hh:mm:ss");
+        reset(txtFormato,  ".mkv, .mp4 ...");
+        reset(txtIdioma,   "Español, Inglés ...");
     }
-    
-    private JLabel crearLabel(String text) {
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        
-        return lbl;
+
+    // ── Private helpers ───────────────────────────────────────────────────────
+
+    private JPanel crearHeader(String titulo) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(Theme.SURFACE);
+        p.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.BORDER),
+            BorderFactory.createEmptyBorder(16, 20, 16, 20)
+        ));
+        p.add(Theme.titleLabel(titulo), BorderLayout.WEST);
+        return p;
     }
-    
-    private JTextField crearTxt(String placeholder, int lenght) {
-        JTextField txt = new JTextField(placeholder, lenght);        
-        txt.setForeground(Color.GRAY);
-        
-        txt.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (txt.getText().equals(placeholder)) {
-                    txt.setText("");
-                    txt.setForeground(Color.BLACK);
-                }
-            }
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (txt.getText().isEmpty()) {
-                    txt.setText(placeholder);
-                    txt.setForeground(Color.GRAY);
-                }
-            }
-        });
-        
-        return txt;
+
+    private JPanel crearBarra(JButton... btns) {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
+        p.setBackground(Theme.SURFACE);
+        p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Theme.BORDER));
+        for (JButton b : btns) p.add(b);
+        return p;
     }
-    
-    // Metodo temporal para los botones del formulario
-    private JButton crearBtn(String text) {
-        JButton btn = new JButton(text);
-        
-        return btn;
+
+    private JPanel row(String label, JTextField field) {
+        JPanel r = new JPanel(new BorderLayout(0, 4));
+        r.setBackground(Theme.SURFACE);
+        r.setAlignmentX(Component.LEFT_ALIGNMENT);
+        r.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        r.add(Theme.fieldLabel(label), BorderLayout.NORTH);
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        r.add(field, BorderLayout.CENTER);
+        return r;
+    }
+
+    private void set(JTextField f, String val) {
+        f.setText(val);
+        f.setForeground(Theme.TEXT_PRIMARY);
+        f.setBackground(Theme.SURFACE);
+    }
+
+    private void reset(JTextField f, String placeholder) {
+        f.setText(placeholder);
+        f.setForeground(Theme.TEXT_MUTED);
+        f.setBackground(Theme.SURFACE_ALT);
     }
 }
