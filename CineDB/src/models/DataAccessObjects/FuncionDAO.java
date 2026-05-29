@@ -44,7 +44,7 @@ public class FuncionDAO {
     }
 
     public List<Funcion> getAllFunciones() {
-        List<Funcion> lista = new ArrayList<>();        
+        List<Funcion> lista = new ArrayList<>();
         String sql = """
             SELECT f.id, f.id_pelicula, p.nombre, f.num_sala, f.hora_inicio, f.hora_fin
             FROM funcion f
@@ -81,6 +81,36 @@ public class FuncionDAO {
             """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, numSala);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                LocalTime inicio = rs.getTime("hora_inicio").toLocalTime();
+                LocalTime fin    = rs.getTime("hora_fin").toLocalTime();
+                lista.add(new Funcion(
+                    rs.getInt("id"),
+                    rs.getInt("id_pelicula"),
+                    rs.getString("nombre"),
+                    rs.getInt("num_sala"),
+                    inicio, fin
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    /** Devuelve todas las funciones programadas para una película específica. */
+    public List<Funcion> getFuncionesByPelicula(int idPelicula) {
+        List<Funcion> lista = new ArrayList<>();
+        String sql = """
+            SELECT f.id, f.id_pelicula, p.nombre, f.num_sala, f.hora_inicio, f.hora_fin
+            FROM funcion f
+            JOIN pelicula p ON f.id_pelicula = p.id
+            WHERE f.id_pelicula = ?
+            ORDER BY f.hora_inicio
+            """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPelicula);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 LocalTime inicio = rs.getTime("hora_inicio").toLocalTime();

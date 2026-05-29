@@ -19,25 +19,41 @@ public class ControladorInicio {
         }
 
         initController();
-        new ControladorPeliculas(conn, view.panelPeliculas);
-        new ControladorClientes(conn, view.panelClientes);
+        new ControladorPeliculas (conn, view.panelPeliculas);
+        new ControladorClientes  (conn, view.panelClientes);
         new ControladorMembresias(conn, view.panelMembresias);
-        new ControladorSalas(conn, view.panelSalas);
-        new ControladorFunciones(conn, view.panelFunciones);
+        new ControladorSalas     (conn, view.panelSalas);
+        new ControladorFunciones (conn, view.panelFunciones);
+        new ControladorVender    (conn, view.panelVender);   // ← NUEVO
     }
 
     private void initController() {
-        view.btnClientes.addActionListener(e  -> view.card.show(view.panelCentral, "CLIENTES"));
-        view.btnPeliculas.addActionListener(e -> view.card.show(view.panelCentral, "PELICULAS"));
-        view.btnFunciones.addActionListener(e -> view.card.show(view.panelCentral, "FUNCIONES"));
-        //view.btnCartelera.addActionListener(e -> view.card.show(view.panelCentral, "CARTELERAS"));
+        view.btnClientes.addActionListener(e -> {
+            view.card.show(view.panelCentral, "CLIENTES");
+            view.setNavActive(view.btnClientes);
+        });
+        view.btnPeliculas.addActionListener(e -> {
+            view.card.show(view.panelCentral, "PELICULAS");
+            view.setNavActive(view.btnPeliculas);
+        });
+        view.btnFunciones.addActionListener(e -> {
+            view.card.show(view.panelCentral, "FUNCIONES");
+            view.setNavActive(view.btnFunciones);
+        });
         view.btnSalas.addActionListener(e -> {
             view.card.show(view.panelCentral, "SALAS");
+            view.setNavActive(view.btnSalas);
             view.panelCentral.revalidate();
             view.panelCentral.repaint();
         });
-        view.btnMembresias.addActionListener(e -> view.card.show(view.panelCentral, "MEMBRESIAS"));
-        view.btnVender.addActionListener(e    -> view.card.show(view.panelCentral, "VENDER"));
-        view.btnSalir.addActionListener(e     -> view.botonSalir());
+        view.btnMembresias.addActionListener(e -> {
+            view.card.show(view.panelCentral, "MEMBRESIAS");
+            view.setNavActive(view.btnMembresias);
+        });
+        view.btnVender.addActionListener(e -> {
+            view.card.show(view.panelCentral, "VENDER");
+            view.setNavActive(view.btnVender);
+        });
+        view.btnSalir.addActionListener(e -> view.botonSalir());
     }
 }
