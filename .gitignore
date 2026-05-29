@@ -9,6 +9,7 @@ CineDB/dist/
 CineDB/nbproject/private/
 CineDB/nbproject/build-impl.xml
 CineDB/nbproject/genfiles.properties
+CineDB/nbproject/project.properties
 
 # Logs
 *.log

@@ -1,95 +1,245 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
-public class VentanaInicio extends JFrame{
-    public JPanel panelFondo, panelCentral, panelSideBar, panelHeader;
-    public JButton btn1, btn2, btn3, btn4;
-    public JLabel lblTitulo;
-    public JTextField txt1;
-    
+public class VentanaInicio extends JFrame {
+
+    public PanelClientes   panelClientes;
+    public PanelPeliculas  panelPeliculas;
+    public PanelMembresias panelMembresias;
+    public PanelSalas      panelSalas;
+    public PanelFunciones  panelFunciones;
+    public PanelVender     panelVender;      
+
+    public JPanel    panelFondo, panelCentral, panelSideBar, panelHeader;
+    public JButton   btnClientes, btnPeliculas, btnFunciones,
+                     btnSalas, btnMembresias, btnVender, btnSalir;
+    public CardLayout card;
+
+    private JButton navActivo;
+
     public VentanaInicio() {
         configFrame();
         initComponents();
     }
-    
+
     private void configFrame() {
         setLayout(new BorderLayout());
-        setTitle("Inicio de sesion");
-        //setExtendedState(MAXIMIZED_BOTH);
-        setSize(1200, 700);                        
-        //setIconImage(new ImageIcon("URL").getImage());
+        setTitle("Cinefan");
+        setSize(1200, 700);
+        try {
+            setIconImage(new ImageIcon(
+                getClass().getResource("/resources/entrada-de-cine.png")).getImage());
+        } catch (Exception ignored) {}
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setLocationRelativeTo(null);
     }
-    
-    private void initComponents() {
-        panelFondo = new JPanel(new BorderLayout());
-        panelHeader = crearPanelHeader();
-        panelCentral = crearPanelCentral();
-        panelSideBar = crearSideBar();
 
-        panelFondo.add(panelHeader, BorderLayout.NORTH);
+    private void initComponents() {
+        panelFondo   = new JPanel(new BorderLayout());
+        panelFondo.setBackground(Theme.CONTENT_BG);
+
+        panelHeader  = crearHeader();
+        panelSideBar = crearSideBar();
+        panelCentral = crearPanelCentral();
+
+        panelFondo.add(panelHeader,  BorderLayout.NORTH);
         panelFondo.add(panelSideBar, BorderLayout.WEST);
         panelFondo.add(panelCentral, BorderLayout.CENTER);
         add(panelFondo);
-    }
-    
-    // Creacion de paneles
-    private JPanel crearPanelHeader() {
-        JPanel p = new JPanel();                
-        
-        
+    }    
+
+    private JPanel crearHeader() {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 18, 0));
+        p.setPreferredSize(new Dimension(0, 60));
+        p.setBackground(Theme.HEADER_BG);
+
+        try {
+            ImageIcon ico = new ImageIcon(
+                getClass().getResource("/resources/entrada-de-cine.png"));
+            Image img = ico.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            JLabel iconLbl = new JLabel(new ImageIcon(img));
+            iconLbl.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
+            p.add(iconLbl);
+        } catch (Exception ignored) {}
+
+        JLabel part1 = new JLabel("Cine");
+        part1.setFont(Theme.FONT_HEADER);
+        part1.setForeground(Color.WHITE);
+        JLabel part2 = new JLabel("fan");
+        part2.setFont(Theme.FONT_HEADER);
+        part2.setForeground(Theme.RED_PRIMARY);
+
+        p.add(part1);
+        p.add(part2);
         return p;
-    }
-    
+    }    
+
     private JPanel crearSideBar() {
         JPanel p = new JPanel();
-        
-        
-        return p;        
-    }
-    
-    private JPanel crearPanelCentral() {
-        JPanel p = new JPanel();
-        
+        p.setLayout(new GridLayout(0, 1, 0, 2));
+        p.setBackground(Theme.SIDEBAR_BG);
+        p.setPreferredSize(new Dimension(220, 0));
+        p.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        btnClientes   = crearNavBtn("Clientes",   "anadir-contacto.png");
+        btnPeliculas  = crearNavBtn("Películas",  "carrete-de-pelicula.png");
+        btnFunciones  = crearNavBtn("Funciones",  "tiempo-de-la-funcion.png");
+        btnSalas      = crearNavBtn("Salas",      "cine.png");
+        btnMembresias = crearNavBtn("Membresías", "anadir-contacto.png");
+        btnVender     = crearNavBtn("Vender",     "entradas.png");
+
+        p.add(btnClientes);
+        p.add(btnPeliculas);
+        p.add(btnFunciones);
+        p.add(btnSalas);
+        p.add(btnMembresias);
+        p.add(btnVender);
+        p.add(Box.createVerticalStrut(20));
+
+        JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
+        sep.setForeground(new Color(255, 255, 255, 25));
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        p.add(sep);
+        p.add(Box.createVerticalStrut(10));
+
+        btnSalir = crearNavBtn("Salir", "salida.png");
+        btnSalir.setForeground(Theme.RED_PRIMARY);
+        p.add(btnSalir);
+
+        setNavActive(btnClientes);
         return p;
     }
-    
-    
-    
-    // Helpers construccion
-    private JButton crearBotonSideBar(String texto) {
+
+    private JButton crearNavBtn(String texto, String iconPath) {
         JButton b = new JButton(texto);
-        b.setBackground(Color.orange);
-        b.setForeground(Color.white);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        b.setFont(Theme.FONT_NAV);
+        b.setForeground(new Color(160, 160, 190));
+        b.setBackground(Theme.SIDEBAR_BG);
+
         b.setBorderPainted(false);
         b.setFocusPainted(false);
-        
+        b.setOpaque(true);
+        b.setContentAreaFilled(true);
+        b.setDoubleBuffered(true);
+
+        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setHorizontalAlignment(SwingConstants.LEADING);
+        b.setIconTextGap(14);
+
+        Dimension btnSize = new Dimension(220, 60);
+        b.setPreferredSize(btnSize);
+        b.setMinimumSize(btnSize);
+        b.setMaximumSize(btnSize);
+
+        b.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 3, 0, 0, Theme.SIDEBAR_BG),
+            BorderFactory.createEmptyBorder(10, 18, 10, 18)
+        ));
+
+        try {
+            ImageIcon ico = new ImageIcon(
+                getClass().getResource("/resources/" + iconPath));
+            Image img = ico.getImage().getScaledInstance(26, 26, Image.SCALE_SMOOTH);
+            b.setIcon(new ImageIcon(img));
+        } catch (Exception ignored) {}
+
+        b.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                if (b != navActivo) {
+                    b.setBackground(new Color(45, 45, 55));
+                    b.setForeground(new Color(200, 200, 220));
+                    b.repaint();
+                    SwingUtilities.getWindowAncestor(b).repaint();
+                }
+            }
+            public void mouseExited(MouseEvent e) {
+                if (b != navActivo) {
+                    b.setBackground(Theme.SIDEBAR_BG);
+                    b.repaint();
+                }
+            }
+        });
+
         return b;
     }
-    
-    private JLabel crearLabel(String texto) {
-        JLabel l = new JLabel(texto);
-        l.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        
-        return l;
+
+    public void setNavActive(JButton btn) {
+        if (navActivo != null) {
+            navActivo.setBackground(Theme.SIDEBAR_BG);
+            navActivo.setForeground(new Color(160, 160, 190));
+            navActivo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 3, 0, 0, Theme.SIDEBAR_BG),
+                BorderFactory.createEmptyBorder(0, 14, 0, 14)
+            ));
+        }
+        navActivo = btn;
+        btn.setBackground(new Color(40, 40, 60));
+        btn.setForeground(Theme.RED_PRIMARY);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 4, 0, 0, Theme.RED_PRIMARY),
+            BorderFactory.createEmptyBorder(0, 14, 0, 14)
+        ));
+    }    
+
+    private JPanel crearPanelCentral() {
+        card = new CardLayout();
+        JPanel p = new JPanel(card);
+        p.setBackground(Theme.CONTENT_BG);
+
+        panelClientes   = new PanelClientes();
+        panelPeliculas  = new PanelPeliculas();
+        panelMembresias = new PanelMembresias();
+        panelSalas      = new PanelSalas();
+        panelFunciones  = new PanelFunciones();
+        panelVender     = new PanelVender();
+
+        p.add(panelClientes,   "CLIENTES");
+        p.add(panelPeliculas,  "PELICULAS");
+        p.add(panelMembresias, "MEMBRESIAS");
+        p.add(panelSalas,      "SALAS");
+        p.add(panelFunciones,  "FUNCIONES");
+        p.add(panelVender,     "VENDER");
+
+        card.show(p, "CLIENTES");
+        return p;
+    }    
+
+    public void botonSalir() {
+        UIManager.put("OptionPane.background", Theme.SURFACE);
+        UIManager.put("Panel.background",      Theme.SURFACE);
+        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN,  16));
+        UIManager.put("OptionPane.buttonFont",  new Font("Segoe UI", Font.BOLD,   12));
+        UIManager.put("Button.background",  Theme.RED_PRIMARY);
+        UIManager.put("Button.foreground",  Color.WHITE);
+
+        int r = JOptionPane.showConfirmDialog(
+            panelFondo, "¿Estás seguro de que quieres salir?",
+            "Salir", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (r == JOptionPane.YES_OPTION) System.exit(0);
     }
-    
-    private JTextField crearCampo(int length) {
-        JTextField campo = new JTextField(length);
-        campo.setCaretColor(Color.ORANGE);
-        
-        return campo;
-    }
-    
 }

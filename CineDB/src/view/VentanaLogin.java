@@ -1,141 +1,267 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Image;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class VentanaLogin extends JFrame{
-    private JPanel panelCentral;
-    public JButton btnIniciarSesion, btnRegistrar;
-    public JTextField txtUsuario, txtContraseña;
-    
-    public VentanaLogin(){
+
+public class VentanaLogin extends JFrame {
+
+    public JPanel panelLogin, panelRegistrar;
+    public JButton btnIniciarSesion, btnRegistrar, btnCrearUsuario, btnCancelar;
+    public JTextField txtUsuario, txtRegistrarUsuario;
+    public JPasswordField txtContraseña, txtRegistrarContraseña, txtConfirmarContraseña;
+    public CardLayout card;
+
+    public VentanaLogin() {
         configFrame();
         initComponents();
     }
-    
+
     private void configFrame() {
-        setLayout(new BorderLayout());
-        setTitle("Inicio de sesion");
-        setSize(400, 550);
-        //setIconImage(new ImageIcon("URL").getImage());
+        setTitle("Cinefan — Inicio de sesión");
+        setSize(400, 600);
+        setIconImage(new ImageIcon(getClass().getResource("/resources/usuario.png")).getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setLocationRelativeTo(null);                     
+        setLocationRelativeTo(null);
     }
-    
-    private void initComponents() {
-        // Construimos interfaz
-        panelCentral = crearPanelCentral();                       
-        add(panelCentral);
-    }
-    
-    private JPanel crearPanelCentral() {
-        JPanel p = new JPanel(new GridBagLayout());
-        p.setBackground(new Color(245, 245, 245));
-        //p.setBackground(Color.red);
-        p.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 5, 10, 5);
-        
-        // Label Titulo
-        JLabel titulo = new JLabel("Login Cine", SwingConstants.CENTER);
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titulo.setBorder(BorderFactory.createEmptyBorder(40, 0, 40, 0));
-        //titulo.setOpaque(true);
-        //titulo.setBackground(Color.green);
-        gbc.gridx = 0; gbc.gridy = 0;               
-        gbc.gridwidth = 2;                          
-        gbc.weightx = 1.0;                          // La celda ocupa todo el ancho
-        gbc.fill = GridBagConstraints.HORIZONTAL;   // El JLabel se estira
-        p.add(titulo, gbc);
-        
-        // Label Usuario
-        gbc.gridy = 1; gbc.gridx = 0;             // Posicion
-        gbc.anchor = GridBagConstraints.WEST;     // Donde se posiciona el componente en la celda
-        gbc.fill = GridBagConstraints.NONE;       //Como se llena el espacio disponible        
-        gbc.gridwidth = 1;                        // Celdas que ocupa el componente
-        gbc.weightx = 0;
-        p.add(crearLabel("Usuario: "), gbc);
-        
-        // Label Contraseña
-        gbc.gridy = 2;
-        p.add(crearLabel("Contraseña: "), gbc);
-        
-        // TextField Usuario
-        gbc.gridy = 1; gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        txtUsuario = crearCampo(150);
-        p.add(txtUsuario, gbc);
-        
-        // TextField Contraseña
-        gbc.gridy = 2;
-        txtContraseña = crearCampo(150);
-        p.add(txtContraseña, gbc);
-        
-        // Boton IniciarSesion
-        gbc.gridy = 3; gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        gbc.weightx = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.NONE;
-        btnIniciarSesion = crearBoton("Iniciar Sesion");
-        p.add(btnIniciarSesion, gbc);
-        
-        // Boton Registrarse
-        gbc.gridy = 4;
-        btnRegistrar = crearBoton("Registrarse");
-        p.add(btnRegistrar, gbc);        
-        
-        // 🔥 FILA FANTASMA (LA CLAVE)
-        gbc.gridx = 0;
-        gbc.gridy = 5;          // fila después de todo
-        gbc.gridwidth = 2;
-        gbc.weighty = 1.0;      // 👈 esto empuja TODO hacia arriba
-        gbc.fill = GridBagConstraints.VERTICAL;
 
-        p.add(Box.createVerticalGlue(), gbc);
+    private void initComponents() {
+        card = new CardLayout();
+        setLayout(card);
+        panelLogin     = crearPanelLogin();
+        panelRegistrar = crearPanelRegistrar();
+        add(panelLogin,     "LOGIN");
+        add(panelRegistrar, "REGISTRAR");
+        card.show(getContentPane(), "LOGIN");
+    }   
+
+    private JPanel crearPanelLogin() {
+        JPanel root = new JPanel(new GridBagLayout());
+        root.setBackground(Theme.CONTENT_BG);
+
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Theme.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Theme.BORDER, 1),
+            BorderFactory.createEmptyBorder(32, 32, 32, 32)
+        ));
+        card.setMaximumSize(new Dimension(320, Integer.MAX_VALUE));
+
+        JPanel iconBox = new JPanel();
+        iconBox.setBackground(Theme.RED_PRIMARY);
+        iconBox.setPreferredSize(new Dimension(56, 56));
+        iconBox.setMaximumSize(new Dimension(56, 56));
+        iconBox.setMinimumSize(new Dimension(56, 56));
+        iconBox.setBorder(BorderFactory.createEmptyBorder());
+        JLabel iconLbl = new JLabel("\uD83C\uDFAC", SwingConstants.CENTER);
+        iconLbl.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
+        iconBox.add(iconLbl);
+        iconBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel iconWrap = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        iconWrap.setBackground(Theme.SURFACE);
+        iconWrap.setAlignmentX(Component.CENTER_ALIGNMENT);
         
+        try {
+            ImageIcon ico = new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png"));
+            Image img = ico.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+            JLabel icoLabel = new JLabel(new ImageIcon(img));
+            icoLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+            iconWrap.add(icoLabel);
+        } catch (Exception ex) {
+            iconWrap.add(iconBox);
+        }
+
+        JPanel nameRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0));
+        nameRow.setBackground(Theme.SURFACE);
+        nameRow.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel namePart1 = new JLabel("Cine");
+        namePart1.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        namePart1.setForeground(Theme.TEXT_PRIMARY);
+        JLabel namePart2 = new JLabel("fan");
+        namePart2.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        namePart2.setForeground(Theme.RED_PRIMARY);
+        nameRow.add(namePart1);
+        nameRow.add(namePart2);
+
+        txtUsuario   = Theme.styledField("Nombre de usuario", 20);
+        txtContraseña = Theme.styledPasswordField("Contraseña", 20);
+        txtUsuario.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        txtContraseña.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+
+        btnIniciarSesion = Theme.loginButton("Iniciar sesión");
+        btnRegistrar     = Theme.secondaryLoginButton("Crear cuenta");
+        
+        Dimension btnSize = new Dimension(240, 42);
+
+        btnIniciarSesion.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnRegistrar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnIniciarSesion.setPreferredSize(btnSize);
+        btnIniciarSesion.setMaximumSize(btnSize);
+
+        btnRegistrar.setPreferredSize(btnSize);
+        btnRegistrar.setMaximumSize(btnSize);
+
+        card.add(iconWrap);
+        card.add(Box.createVerticalStrut(8));
+        card.add(nameRow);
+        card.add(Box.createVerticalStrut(28));
+        card.add(fieldLabelPanel("Usuario"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtUsuario);
+        card.add(Box.createVerticalStrut(12));
+        card.add(fieldLabelPanel("Contraseña"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtContraseña);
+        card.add(Box.createVerticalStrut(20));
+        card.add(btnIniciarSesion);
+        card.add(Box.createVerticalStrut(8));
+        card.add(btnRegistrar);
+
+        root.add(card);
+        return root;
+    }
+
+    private JPanel crearPanelRegistrar() {
+        JPanel root = new JPanel(new GridBagLayout());
+        root.setBackground(Theme.CONTENT_BG);
+
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Theme.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Theme.BORDER, 1),
+            BorderFactory.createEmptyBorder(32, 32, 32, 32)
+        ));
+
+        JLabel titulo = new JLabel("Crear usuario");
+        titulo.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        titulo.setForeground(Theme.TEXT_PRIMARY);
+        titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel subtitulo = new JLabel("Completa los campos para registrarte");
+        subtitulo.setFont(Theme.FONT_BODY);
+        subtitulo.setForeground(Theme.TEXT_SECONDARY);
+        subtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtRegistrarUsuario     = Theme.styledField("Nombre de usuario", 20);
+        txtRegistrarContraseña  = Theme.styledPasswordField("Contraseña", 20);
+        txtConfirmarContraseña  = Theme.styledPasswordField("Confirmar contraseña", 20);
+        txtRegistrarUsuario.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        txtRegistrarContraseña.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        txtConfirmarContraseña.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+
+        btnCrearUsuario = Theme.loginButton("Crear usuario");
+        btnCancelar     = Theme.secondaryLoginButton("Cancelar");
+        
+        Dimension btnSize = new Dimension(240, 42);
+
+        btnCrearUsuario.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnCancelar.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnCrearUsuario.setPreferredSize(btnSize);
+        btnCrearUsuario.setMaximumSize(btnSize);
+        
+        btnCancelar.setPreferredSize(btnSize);
+        btnCancelar.setMaximumSize(btnSize);
+
+        card.add(titulo);
+        card.add(Box.createVerticalStrut(4));
+        card.add(subtitulo);
+        card.add(Box.createVerticalStrut(24));
+        card.add(fieldLabelPanel("Nombre de usuario"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtRegistrarUsuario);
+        card.add(Box.createVerticalStrut(12));
+        card.add(fieldLabelPanel("Contraseña"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtRegistrarContraseña);
+        card.add(Box.createVerticalStrut(12));
+        card.add(fieldLabelPanel("Confirmar contraseña"));
+        card.add(Box.createVerticalStrut(4));
+        card.add(txtConfirmarContraseña);
+        card.add(Box.createVerticalStrut(20));
+        card.add(btnCrearUsuario);
+        card.add(Box.createVerticalStrut(8));
+        card.add(btnCancelar);
+
+        root.add(card);
+        return root;
+    }
+
+    private JPanel fieldLabelPanel(String text) {
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        p.setBackground(Theme.SURFACE);
+        p.setAlignmentX(Component.CENTER_ALIGNMENT);
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20));
+        JLabel l = new JLabel(text.toUpperCase());
+        l.setFont(Theme.FONT_LABEL);
+        l.setForeground(Theme.TEXT_SECONDARY);
+        p.add(l);
         return p;
+    }   
+
+    public String getTxtUsuario() { 
+        return txtUsuario.getText(); 
     }
-    
-    // Helpers construccion
-    private JButton crearBoton(String texto) {
-        JButton b = new JButton(texto);
-        b.setBackground(new Color(200, 200, 200));
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        b.setBorderPainted(false);
-        b.setFocusPainted(false);
-        
-        return b;
+    public String getTxtContraseña() {
+        return new String(txtContraseña.getPassword()); 
     }
-    
-    private JLabel crearLabel(String texto) {
-        JLabel l = new JLabel(texto);
-        l.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        
-        return l;
+    public String getTxtNuevoUsuario() {
+        return txtRegistrarUsuario.getText(); 
     }
-    
-    private JTextField crearCampo(int length) {
-        JTextField campo = new JTextField(length);
-        campo.setCaretColor(Color.ORANGE);
-        
-        return campo;
+    public String getTxtNuevaContraseña() {
+        return new String(txtRegistrarContraseña.getPassword()); 
     }
-    
+    public String getTxtConfirmarContraseña() {
+        return new String(txtConfirmarContraseña.getPassword()); 
+    }
+
+    public void limpiarCamposLogin() {
+        txtUsuario.setText("Nombre de usuario");
+        txtUsuario.setForeground(Theme.TEXT_MUTED);
+        txtUsuario.setBackground(Theme.SURFACE_ALT);
+        txtContraseña.setText("Contraseña");
+        txtContraseña.setEchoChar((char) 0);
+        txtContraseña.setForeground(Theme.TEXT_MUTED);
+        txtContraseña.setBackground(Theme.SURFACE_ALT);
+    }
+
+    public void limpiarCamposRegistro() {
+        txtRegistrarUsuario.setText("Nombre de usuario");
+        txtRegistrarUsuario.setForeground(Theme.TEXT_MUTED);
+        txtRegistrarUsuario.setBackground(Theme.SURFACE_ALT);
+        txtRegistrarContraseña.setText("Contraseña");
+        txtRegistrarContraseña.setEchoChar((char) 0);
+        txtRegistrarContraseña.setForeground(Theme.TEXT_MUTED);
+        txtRegistrarContraseña.setBackground(Theme.SURFACE_ALT);
+        txtConfirmarContraseña.setText("Confirmar contraseña");
+        txtConfirmarContraseña.setEchoChar((char) 0);
+        txtConfirmarContraseña.setForeground(Theme.TEXT_MUTED);
+        txtConfirmarContraseña.setBackground(Theme.SURFACE_ALT);
+    }
+
+    public void showAlert(String message) {
+        JOptionPane.showMessageDialog(this, message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
 }
