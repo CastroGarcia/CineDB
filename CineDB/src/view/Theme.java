@@ -19,8 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class Theme {
-
-    // ── Palette ──────────────────────────────────────────────────────────────
+    
     public static final Color RED_PRIMARY   = new Color(226, 75, 74);
     public static final Color RED_DARK      = new Color(163, 45, 45);
     public static final Color RED_LIGHT     = new Color(252, 235, 235);
@@ -50,8 +49,7 @@ public class Theme {
 
     public static final Color TABLE_HEADER  = new Color(248, 248, 252);
     public static final Color TABLE_ROW_ALT = new Color(252, 252, 255);
-
-    // ── Typography ────────────────────────────────────────────────────────────
+    
     public static final Font FONT_HEADER    = new Font("Segoe UI", Font.BOLD, 32);
     public static final Font FONT_TITLE     = new Font("Segoe UI", Font.PLAIN,  22);
     public static final Font FONT_SECTION   = new Font("Segoe UI", Font.PLAIN,  16);
@@ -61,8 +59,7 @@ public class Theme {
     public static final Font FONT_NAV       = new Font("Segoe UI", Font.BOLD, 17);
     public static final Font FONT_TABLE_HDR = new Font("Segoe UI", Font.BOLD,   12);
     public static final Font FONT_BTN       = new Font("Segoe UI", Font.PLAIN,  13);
-
-    // ── Borders ───────────────────────────────────────────────────────────────
+    
     public static Border panelBorder() {
         return BorderFactory.createLineBorder(BORDER, 1);
     }
@@ -83,11 +80,8 @@ public class Theme {
             BorderFactory.createLineBorder(RED_PRIMARY, 1),
             BorderFactory.createEmptyBorder(6, 10, 6, 10)
         );
-    }
-
-    // ── Button factories ──────────────────────────────────────────────────────
-
-    /** Red filled primary button */
+    }    
+   
     public static JButton primaryButton(String text) {
         JButton b = new JButton(text);
         b.setFont(FONT_BTN);
@@ -184,8 +178,6 @@ public class Theme {
         return b;
     }
 
-    // ── Field factories ───────────────────────────────────────────────────────
-
     public static JTextField styledField(String placeholder, int cols) {
         JTextField f = new JTextField(cols);
         f.setFont(FONT_BODY);
@@ -243,9 +235,7 @@ public class Theme {
             }
         });
         return f;
-    }
-
-    // ── Label factories ───────────────────────────────────────────────────────
+    }    
 
     public static JLabel titleLabel(String text) {
         JLabel l = new JLabel(text);

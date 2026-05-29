@@ -50,8 +50,6 @@ public class ControladorClientes {
         view.btnEliminar.addActionListener(e -> eliminarCliente());
     }
 
-    // ---- Métodos CRUD -------------------------------------------------------
-
     private void guardarCliente() {
         Client client = view.getFormData();
 
@@ -125,7 +123,6 @@ public class ControladorClientes {
         Client client = view.getFormData();
         if (camposVacios(client)) return;
 
-        // Forzamos la CURP original (no editable en UI)
         client.setCurp(view.curpEditando);
 
         ClientDAO dao = new ClientDAO(conn, client);
@@ -188,8 +185,6 @@ public class ControladorClientes {
             });
         }
     }
-
-    // ---- Métodos auxiliares -------------------------------------------------
 
     private boolean camposVacios(Client client) {
         if (client == null) {

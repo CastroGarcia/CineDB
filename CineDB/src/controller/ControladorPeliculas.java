@@ -50,15 +50,11 @@ public class ControladorPeliculas {
             view.card.show(view, "PRINCIPAL");
         });
         view.btnEliminar.addActionListener(e -> eliminarPelicula());
-    }    
- 
-    // ---- Metodos CRUD --------------------------------------
+    }        
 
-    private void guardarPelicula() {
-        // Obtiene los datos de los campos
+    private void guardarPelicula() {        
         Movie movie = view.getFormData(); 
-
-        // Validar que no haya campos vacíos
+        
         if (movie.getName().isBlank() || movie.getGenre().isBlank() ||
             movie.getDuration().isBlank() || movie.getFormat().isBlank() ||
             movie.getLanguage().isBlank()) {
@@ -108,7 +104,6 @@ public class ControladorPeliculas {
     private void abrirEdicion() {
         int filaSeleccionada = view.tablaPeliculas.getSelectedRow();
 
-        // Validar que haya una fila seleccionada
         if (filaSeleccionada == -1) {
             JOptionPane.showMessageDialog(view, 
                 "Selecciona una pelicula para editar", 
@@ -116,7 +111,6 @@ public class ControladorPeliculas {
             return;
         }
 
-        // Obtener datos de la fila seleccionada
         int id         = (int)    view.dtmPeliculas.getValueAt(filaSeleccionada, 0);
         String nombre  = (String) view.dtmPeliculas.getValueAt(filaSeleccionada, 1);
         String genero  = (String) view.dtmPeliculas.getValueAt(filaSeleccionada, 2);
@@ -124,7 +118,6 @@ public class ControladorPeliculas {
         String formato = (String) view.dtmPeliculas.getValueAt(filaSeleccionada, 4);
         String idioma  = (String) view.dtmPeliculas.getValueAt(filaSeleccionada, 5);
 
-        // Llenar formulario y cambiar panel
         view.activarModoEdicion(id, nombre, genero, duracion, formato, idioma);
     }
     
@@ -132,7 +125,6 @@ public class ControladorPeliculas {
         Movie movie = view.getFormData();
         movie.setId(view.idEditando);
 
-        // Validar campos vacíos
         if (camposVacios(movie)) return;
 
         MovieDAO dao = new MovieDAO(conn, movie);
@@ -154,7 +146,6 @@ public class ControladorPeliculas {
     private void eliminarPelicula() {
         int filaSeleccionada = view.tablaPeliculas.getSelectedRow();
         
-        // Validar que haya una fila seleccionada
         if (filaSeleccionada == -1) {
             JOptionPane.showMessageDialog(view, 
                 "Selecciona una pelicula para eliminar", 
@@ -162,11 +153,9 @@ public class ControladorPeliculas {
             return;
         }
                         
-        // Obtenemos el valor que usaremos como condicion para eliminar el registro
         int id = (int) view.dtmPeliculas.getValueAt(filaSeleccionada, 0);
         String nombre = (String) view.dtmPeliculas.getValueAt(filaSeleccionada, 1);
         
-        // Confirmar antes de eliminar
         int confirmacion = JOptionPane.showConfirmDialog(view, 
                 "Deseas eliminar la pelicula " + nombre + "?", 
                 "Confirmar eliminacion", 
@@ -203,8 +192,7 @@ public class ControladorPeliculas {
             });
         }
     }
-    
-    //----- Metodos auxiliares -------------------------
+       
     private boolean camposVacios(Movie movie) {
         if (movie.getName().isBlank()  || movie.getGenre().isBlank()  ||
             movie.getDuration().isBlank() || movie.getFormat().isBlank() ||

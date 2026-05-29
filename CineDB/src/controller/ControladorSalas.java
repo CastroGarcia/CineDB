@@ -61,8 +61,7 @@ public class ControladorSalas {
             cargarSalas();
             view.card.show(view, "PRINCIPAL");
         });
-
-        // Seat panel buttons
+        
         view.panelAsientos.btnRegresar.addActionListener(e -> {
             salaViendoAsientos = -1;
             view.card.show(view, "PRINCIPAL");
@@ -70,8 +69,7 @@ public class ControladorSalas {
 
         view.panelAsientos.btnGuardar.addActionListener(e -> guardarEstadosAsientos());
     }
-
-    // ----- CRUD ----------------------------------------------------------
+    
     private void guardarSala() {
         Sala sala = view.getFormData();
         if (sala.getNumSala() <= 0) {
@@ -81,8 +79,7 @@ public class ControladorSalas {
             return;
         }
         SalaDAO dao = new SalaDAO(conn, sala);
-        if (dao.registerSala()) {
-            // Pre-generate seats
+        if (dao.registerSala()) {            
             AsientoDAO asientoDAO = new AsientoDAO(conn);
             asientoDAO.generarAsientos(sala.getNumSala(), sala.getAsientos());
 
@@ -140,8 +137,7 @@ public class ControladorSalas {
             "Deseas eliminar la sala numero " + numSala + "?\nTambien se eliminaran todos sus asientos.",
             "Confirmar eliminacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (conf != JOptionPane.YES_OPTION) return;
-
-        // Delete seats first (FK integrity)
+        
         AsientoDAO asientoDAO = new AsientoDAO(conn);
         asientoDAO.deleteAsientosBySala(numSala);
 
@@ -155,8 +151,7 @@ public class ControladorSalas {
             JOptionPane.showMessageDialog(view, "Error al eliminar la sala", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    // ----- Asientos ------------------------------------------------------
+    
     private void abrirAsientos() {
         int fila = view.tablaSalas.getSelectedRow();
         if (fila == -1) {
@@ -170,8 +165,7 @@ public class ControladorSalas {
         List<Asiento> asientos = asientoDAO.getAsientosBySala(numSala);
 
         view.panelAsientos.cargarAsientos(asientos, numSala);
-
-        // Wire seat click listener (re-add each time we open)
+        
         view.panelAsientos.addSeatClickListener(e -> {
             JButton btn = (JButton) e.getSource();
             view.panelAsientos.ciclarEstado(btn);
@@ -196,8 +190,7 @@ public class ControladorSalas {
             JOptionPane.showMessageDialog(view, "Hubo un error al guardar algunos estados", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    // ----- Search / Load -------------------------------------------------
+    
     private void buscarSalas() {
         String query = view.txtBuscador.getText().trim();
         if (query.isBlank()) { cargarSalas(); return; }

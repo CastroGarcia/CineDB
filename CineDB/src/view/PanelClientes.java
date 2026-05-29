@@ -1,9 +1,22 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import models.Client;
 
 public class PanelClientes extends JPanel {
@@ -34,8 +47,6 @@ public class PanelClientes extends JPanel {
         card.show(this, "PRINCIPAL");
     }
 
-    // ── Principal ─────────────────────────────────────────────────────────────
-
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Theme.CONTENT_BG);
@@ -62,9 +73,7 @@ public class PanelClientes extends JPanel {
         p.add(crearBarraAcciones(btnCrear, btnLeer, btnActualizar, btnEliminar),
               BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Formulario ────────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelAgregar() {
         JPanel root = new JPanel(new BorderLayout());
@@ -117,8 +126,6 @@ public class PanelClientes extends JPanel {
         return root;
     }
 
-    // ── Buscar ────────────────────────────────────────────────────────────────
-
     private JPanel crearPanelBuscar() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Theme.CONTENT_BG);
@@ -157,8 +164,6 @@ public class PanelClientes extends JPanel {
         return p;
     }
 
-    // ── Modes ─────────────────────────────────────────────────────────────────
-
     public void activarModoRegistro() {
         curpEditando = null;
         txtCurp.setEditable(true);
@@ -194,8 +199,6 @@ public class PanelClientes extends JPanel {
         card.show(this, "PRINCIPAL");
     }
 
-    // ── Form data ─────────────────────────────────────────────────────────────
-
     public Client getFormData() {
         try {
             return new Client(
@@ -220,9 +223,7 @@ public class PanelClientes extends JPanel {
         resetField(txtTelefono,     "Teléfono");
         resetField(txtCorreo,       "Correo electrónico");
         resetField(txtIdMembership, "ID de membresía");
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelHeader(String titulo) {
         JPanel p = new JPanel(new BorderLayout());

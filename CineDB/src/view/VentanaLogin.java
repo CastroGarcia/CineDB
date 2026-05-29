@@ -1,8 +1,25 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 
 public class VentanaLogin extends JFrame {
 
@@ -34,9 +51,7 @@ public class VentanaLogin extends JFrame {
         add(panelLogin,     "LOGIN");
         add(panelRegistrar, "REGISTRAR");
         card.show(getContentPane(), "LOGIN");
-    }
-
-    // ── Login panel ───────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelLogin() {
         JPanel root = new JPanel(new GridBagLayout());
@@ -51,7 +66,6 @@ public class VentanaLogin extends JFrame {
         ));
         card.setMaximumSize(new Dimension(320, Integer.MAX_VALUE));
 
-        // Logo icon
         JPanel iconBox = new JPanel();
         iconBox.setBackground(Theme.RED_PRIMARY);
         iconBox.setPreferredSize(new Dimension(56, 56));
@@ -66,7 +80,7 @@ public class VentanaLogin extends JFrame {
         JPanel iconWrap = new JPanel(new FlowLayout(FlowLayout.CENTER));
         iconWrap.setBackground(Theme.SURFACE);
         iconWrap.setAlignmentX(Component.CENTER_ALIGNMENT);
-        // Use the app icon if emoji doesn't render
+        
         try {
             ImageIcon ico = new ImageIcon(getClass().getResource("/resources/entrada-de-cine.png"));
             Image img = ico.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
@@ -77,7 +91,6 @@ public class VentanaLogin extends JFrame {
             iconWrap.add(iconBox);
         }
 
-        // App name
         JPanel nameRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0));
         nameRow.setBackground(Theme.SURFACE);
         nameRow.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -90,7 +103,6 @@ public class VentanaLogin extends JFrame {
         nameRow.add(namePart1);
         nameRow.add(namePart2);
 
-        // Fields
         txtUsuario   = Theme.styledField("Nombre de usuario", 20);
         txtContraseña = Theme.styledPasswordField("Contraseña", 20);
         txtUsuario.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
@@ -129,8 +141,6 @@ public class VentanaLogin extends JFrame {
         root.add(card);
         return root;
     }
-
-    // ── Register panel ────────────────────────────────────────────────────────
 
     private JPanel crearPanelRegistrar() {
         JPanel root = new JPanel(new GridBagLayout());
@@ -199,8 +209,6 @@ public class VentanaLogin extends JFrame {
         return root;
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     private JPanel fieldLabelPanel(String text) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         p.setBackground(Theme.SURFACE);
@@ -211,15 +219,23 @@ public class VentanaLogin extends JFrame {
         l.setForeground(Theme.TEXT_SECONDARY);
         p.add(l);
         return p;
+    }   
+
+    public String getTxtUsuario() { 
+        return txtUsuario.getText(); 
     }
-
-    // ── Public API (called by controller) ─────────────────────────────────────
-
-    public String getTxtUsuario()            { return txtUsuario.getText(); }
-    public String getTxtContraseña()         { return new String(txtContraseña.getPassword()); }
-    public String getTxtNuevoUsuario()       { return txtRegistrarUsuario.getText(); }
-    public String getTxtNuevaContraseña()    { return new String(txtRegistrarContraseña.getPassword()); }
-    public String getTxtConfirmarContraseña(){ return new String(txtConfirmarContraseña.getPassword()); }
+    public String getTxtContraseña() {
+        return new String(txtContraseña.getPassword()); 
+    }
+    public String getTxtNuevoUsuario() {
+        return txtRegistrarUsuario.getText(); 
+    }
+    public String getTxtNuevaContraseña() {
+        return new String(txtRegistrarContraseña.getPassword()); 
+    }
+    public String getTxtConfirmarContraseña() {
+        return new String(txtConfirmarContraseña.getPassword()); 
+    }
 
     public void limpiarCamposLogin() {
         txtUsuario.setText("Nombre de usuario");

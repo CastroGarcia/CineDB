@@ -26,19 +26,16 @@ public class ControladorLogin {
     }
     
     private void initController() {
-        
-        // Boton iniciarSesion
+               
         view.btnIniciarSesion.addActionListener(e -> {
             tryLogin();
         });
-        
-        // Boton registrarse
+               
         view.btnRegistrar.addActionListener(e -> {            
             view.card.show(view.getContentPane(), "REGISTRAR");
             view.limpiarCamposLogin();
         });
-        
-        // Boton Crear Usuario
+                
         view.btnCrearUsuario.addActionListener(e -> {
             String username = view.getTxtNuevoUsuario();
             String password = view.getTxtNuevaContraseña();
@@ -55,14 +52,12 @@ public class ControladorLogin {
             view.card.show(view.getContentPane(), "LOGIN");
             view.limpiarCamposRegistro();
         });
-        
-        // Boton Cancelar
+               
         view.btnCancelar.addActionListener(e -> {
             view.limpiarCamposRegistro();
             view.card.show(view.getContentPane(), "LOGIN");
         });
-        
-        //----- VK del teclado -----------------------------
+                
         view.txtUsuario.addKeyListener(new KeyAdapter() {
            @Override
             public void keyPressed(KeyEvent e) {
@@ -80,9 +75,7 @@ public class ControladorLogin {
                 }                
             } 
         });                
-    }
-    
-    //----- Metodos para sesion ------------------------------
+    }        
     
     private void tryLogin() {
         UserDAO user = instanceUser();

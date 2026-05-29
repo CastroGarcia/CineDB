@@ -8,8 +8,7 @@ public class Membership {
         id = 0;
         tipo_membresia = "";
     }
-    
-    // Constructor para recuperar datos
+        
     public Membership(int id, String membership) {
         setId(id);
         setTipo_membresia(membership);

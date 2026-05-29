@@ -12,8 +12,7 @@ public class Movie {
         format = "";
         language = "";
     }
-    
-    //Constructor con id (para mostrar los registros en la tabla)
+        
     public Movie(int id, String name, String genre, String duration, String format, String language) {
         this.id = id;
         setName(name);
@@ -22,8 +21,7 @@ public class Movie {
         setFormat(format);
         setLanguage(language);
     }
-    
-    // Constructor sin id (para cuando se registra una nueva pelicula)
+       
     public Movie(String name, String genre, String duration, String format, String language) {
         setName(name);
         setGenre(genre);

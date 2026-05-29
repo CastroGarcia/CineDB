@@ -1,10 +1,28 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.UIManager;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class VentanaInicio extends JFrame {
 
@@ -13,7 +31,7 @@ public class VentanaInicio extends JFrame {
     public PanelMembresias panelMembresias;
     public PanelSalas      panelSalas;
     public PanelFunciones  panelFunciones;
-    public PanelVender     panelVender;      // ← NUEVO
+    public PanelVender     panelVender;      
 
     public JPanel    panelFondo, panelCentral, panelSideBar, panelHeader;
     public JButton   btnClientes, btnPeliculas, btnFunciones,
@@ -52,9 +70,7 @@ public class VentanaInicio extends JFrame {
         panelFondo.add(panelSideBar, BorderLayout.WEST);
         panelFondo.add(panelCentral, BorderLayout.CENTER);
         add(panelFondo);
-    }
-
-    // ── Header ────────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearHeader() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 18, 0));
@@ -80,9 +96,7 @@ public class VentanaInicio extends JFrame {
         p.add(part1);
         p.add(part2);
         return p;
-    }
-
-    // ── Sidebar ───────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearSideBar() {
         JPanel p = new JPanel();
@@ -190,9 +204,7 @@ public class VentanaInicio extends JFrame {
             BorderFactory.createMatteBorder(0, 4, 0, 0, Theme.RED_PRIMARY),
             BorderFactory.createEmptyBorder(0, 14, 0, 14)
         ));
-    }
-
-    // ── Central panel ─────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearPanelCentral() {
         card = new CardLayout();
@@ -204,20 +216,18 @@ public class VentanaInicio extends JFrame {
         panelMembresias = new PanelMembresias();
         panelSalas      = new PanelSalas();
         panelFunciones  = new PanelFunciones();
-        panelVender     = new PanelVender();     // ← NUEVO
+        panelVender     = new PanelVender();
 
         p.add(panelClientes,   "CLIENTES");
         p.add(panelPeliculas,  "PELICULAS");
         p.add(panelMembresias, "MEMBRESIAS");
         p.add(panelSalas,      "SALAS");
         p.add(panelFunciones,  "FUNCIONES");
-        p.add(panelVender,     "VENDER");         // ← NUEVO
+        p.add(panelVender,     "VENDER");
 
         card.show(p, "CLIENTES");
         return p;
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    }    
 
     public void botonSalir() {
         UIManager.put("OptionPane.background", Theme.SURFACE);

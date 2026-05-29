@@ -10,20 +10,31 @@ public class Sala {
         asientos = 0;        
         disponible = true;
     }
-
-    // Constructor con todos los campos (para mostrar en tabla)
+    
     public Sala(int numSala, int asientos, boolean disponible) {
         setNumSala(numSala);
         setAsientos(asientos);        
         setDisponible(disponible);
     }
 
-    public int getNumSala() { return numSala; }
-    public void setNumSala(int numSala) { this.numSala = numSala; }
+    public int getNumSala() { 
+        return numSala; 
+    }
+    public void setNumSala(int numSala) { 
+        this.numSala = numSala; 
+    }
 
-    public int getAsientos() { return asientos; }
-    public void setAsientos(int asientos) { this.asientos = asientos; }   
+    public int getAsientos() {
+        return asientos; 
+    }
+    public void setAsientos(int asientos) {
+        this.asientos = asientos; 
+    }   
 
-    public boolean isDisponible() { return disponible; }
-    public void setDisponible(boolean disponible) { this.disponible = disponible; }
+    public boolean isDisponible() {
+        return disponible; 
+    }
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible; 
+    }
 }

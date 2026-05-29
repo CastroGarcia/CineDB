@@ -1,51 +1,60 @@
 package view;
 
-import java.awt.*;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 import models.Asiento;
 import models.Funcion;
-import models.Movie;
 
 public class PanelVender extends JPanel {
-
-    // ── Cards ─────────────────────────────────────────────────────────────────
+    
     public CardLayout card;
 
-    // ── Paso 1: ¿Cliente registrado? ─────────────────────────────────────────
     public JButton btnSi, btnNo;
 
-    // ── Paso 2a: Buscar por CURP ──────────────────────────────────────────────
     public JTextField txtCurpVenta;
     public JButton    btnBuscarCliente, btnCancelarCurp;
 
-    // ── Paso 2b: Solo edad ────────────────────────────────────────────────────
     public JTextField txtEdadVenta;
     public JButton    btnConfirmarEdad, btnCancelarEdad;
 
-    // ── Paso 3: Seleccionar película ──────────────────────────────────────────
     public DefaultTableModel dtmPeliculas;
     public JTable            tablaPeliculas;
     public JButton           btnSeleccionarPelicula, btnVolverPelicula;
 
-    // ── Paso 4: Seleccionar función ───────────────────────────────────────────
     public DefaultTableModel dtmFunciones;
     public JTable            tablaFunciones;
     public JButton           btnSeleccionarFuncion, btnVolverFuncion;
 
-    // ── Paso 5: Seleccionar asientos ──────────────────────────────────────────
     public JPanel            gridAsientos;
     public JLabel            lblInfoAsientos;
     public JButton           btnConfirmarAsientos, btnVolverAsientos;
     public List<Asiento>     asientosSeleccionados = new ArrayList<>();
 
-    // ── Paso 6: Boleto ────────────────────────────────────────────────────────
     public JPanel  panelBoleto;
     public JButton btnNuevaVenta;
 
-    // ── Colors for seat grid ──────────────────────────────────────────────────
     private static final Color COL_DISPONIBLE  = new Color(220, 50, 50);
     private static final Color COL_SELECCIONADO= new Color(40, 160, 80);
     private static final Color COL_BLOQUEADO   = new Color(100, 100, 110);
@@ -70,8 +79,6 @@ public class PanelVender extends JPanel {
 
         card.show(this, "PASO1");
     }
-
-    // ── PASO 1: ¿El cliente está registrado? ─────────────────────────────────
 
     private JPanel crearPaso1() {
         JPanel root = wrapper();
@@ -104,8 +111,8 @@ public class PanelVender extends JPanel {
 
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         btns.setBackground(Theme.SURFACE);
-        btnSi = Theme.primaryButton("✔  Sí, está registrado");
-        btnNo = Theme.ghostButton("✘  No, continuar sin membresía");
+        btnSi = Theme.primaryButton("Sí, está registrado");
+        btnNo = Theme.ghostButton("No, continuar sin membresía");
         btns.add(btnSi);
         btns.add(btnNo);
 
@@ -121,8 +128,6 @@ public class PanelVender extends JPanel {
         root.add(centro, BorderLayout.CENTER);
         return root;
     }
-
-    // ── PASO 2a: Buscar cliente por CURP ─────────────────────────────────────
 
     private JPanel crearPaso2Si() {
         JPanel root = wrapper();
@@ -165,8 +170,6 @@ public class PanelVender extends JPanel {
         root.add(centro, BorderLayout.CENTER);
         return root;
     }
-
-    // ── PASO 2b: Ingresar edad directamente ──────────────────────────────────
 
     private JPanel crearPaso2No() {
         JPanel root = wrapper();
@@ -217,8 +220,6 @@ public class PanelVender extends JPanel {
         return root;
     }
 
-    // ── PASO 3: Seleccionar película ─────────────────────────────────────────
-
     private JPanel crearPaso3() {
         JPanel root = wrapper();
         root.add(crearHeader("Vender — Seleccionar película"), BorderLayout.NORTH);
@@ -241,8 +242,6 @@ public class PanelVender extends JPanel {
         root.add(crearBarra(btnVolverPelicula, btnSeleccionarPelicula), BorderLayout.SOUTH);
         return root;
     }
-
-    // ── PASO 4: Seleccionar función ──────────────────────────────────────────
 
     private JPanel crearPaso4() {
         JPanel root = wrapper();
@@ -267,13 +266,10 @@ public class PanelVender extends JPanel {
         return root;
     }
 
-    // ── PASO 5: Seleccionar asientos ─────────────────────────────────────────
-
     private JPanel crearPaso5() {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(COL_BG_GRID);
 
-        // Header
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(COL_BG_GRID);
         header.setBorder(BorderFactory.createEmptyBorder(14, 20, 6, 20));
@@ -283,13 +279,11 @@ public class PanelVender extends JPanel {
         header.add(titulo, BorderLayout.CENTER);
         root.add(header, BorderLayout.NORTH);
 
-        // Pantalla
         JLabel screen = new JLabel("▬▬▬▬  PANTALLA  ▬▬▬▬", SwingConstants.CENTER);
         screen.setFont(new Font("Segoe UI", Font.BOLD, 13));
         screen.setForeground(Color.LIGHT_GRAY);
         screen.setBorder(BorderFactory.createEmptyBorder(4, 0, 10, 0));
 
-        // Grid
         gridAsientos = new JPanel();
         gridAsientos.setBackground(COL_BG_GRID);
 
@@ -304,7 +298,6 @@ public class PanelVender extends JPanel {
         }}, BorderLayout.CENTER);
         root.add(centerWrap, BorderLayout.CENTER);
 
-        // Bottom bar
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.setBackground(new Color(20, 20, 30));
         bottom.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
@@ -320,7 +313,6 @@ public class PanelVender extends JPanel {
         botonesBar.add(btnVolverAsientos);
         botonesBar.add(btnConfirmarAsientos);
 
-        // Leyenda
         JPanel leyenda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         leyenda.setBackground(new Color(20, 20, 30));
         leyenda.add(legendItem(COL_DISPONIBLE,  "Disponible"));
@@ -353,8 +345,6 @@ public class PanelVender extends JPanel {
         return p;
     }
 
-    // ── PASO 6: Boleto ────────────────────────────────────────────────────────
-
     private JPanel crearPaso6() {
         JPanel root = wrapper();
         root.add(crearHeader("Vender — Boleto generado"), BorderLayout.NORTH);
@@ -377,9 +367,6 @@ public class PanelVender extends JPanel {
         return root;
     }
 
-    // ── Public helpers ────────────────────────────────────────────────────────
-
-    /** Reconstruye el grid de asientos según la lista recibida. */
     public void cargarGridAsientos(List<Asiento> asientos) {
         asientosSeleccionados.clear();
         gridAsientos.removeAll();
@@ -443,19 +430,17 @@ public class PanelVender extends JPanel {
             lblInfoAsientos.setText(sb.toString().trim());
         }
     }
-
-    /** Construye y muestra el boleto en el panel de boleto. */
+    
     public void mostrarBoleto(String nombrePelicula, int numSala, Funcion funcion,
                                List<Asiento> asientos, int edad, boolean tieneMembership,
                                String nombreCliente) {
         panelBoleto.removeAll();
 
         double precioPorAsiento = edad < 18 ? 40.0 : 60.0;
-        double descuento        = tieneMembership ? 0.20 : 0.0;
-        double precioFinal      = precioPorAsiento * (1 - descuento);
-        double total            = precioFinal * asientos.size();
+        double descuento = tieneMembership ? 0.20 : 0.0;
+        double precioFinal = precioPorAsiento * (1 - descuento);
+        double total = precioFinal * asientos.size();
 
-        // Card del boleto
         JPanel boletoCard = new JPanel();
         boletoCard.setLayout(new BoxLayout(boletoCard, BoxLayout.Y_AXIS));
         boletoCard.setBackground(Theme.SURFACE);
@@ -465,8 +450,7 @@ public class PanelVender extends JPanel {
         ));
         boletoCard.setAlignmentX(CENTER_ALIGNMENT);
 
-        // --- Encabezado ---
-        JLabel cabecera = new JLabel("🎬  CINEFAN  —  BOLETO DE COMPRA", SwingConstants.CENTER);
+        JLabel cabecera = new JLabel("CINEFAN  —  BOLETO DE COMPRA", SwingConstants.CENTER);
         cabecera.setFont(new Font("Segoe UI", Font.BOLD, 20));
         cabecera.setForeground(Theme.RED_PRIMARY);
         cabecera.setAlignmentX(CENTER_ALIGNMENT);
@@ -480,7 +464,6 @@ public class PanelVender extends JPanel {
         boletoCard.add(sep1);
         boletoCard.add(Box.createVerticalStrut(16));
 
-        // --- Info ---
         if (nombreCliente != null && !nombreCliente.isBlank()) {
             boletoCard.add(filaInfo("Cliente",   nombreCliente));
             boletoCard.add(Box.createVerticalStrut(8));
@@ -492,7 +475,6 @@ public class PanelVender extends JPanel {
         boletoCard.add(filaInfo("Horario",   funcion.getHorario()));
         boletoCard.add(Box.createVerticalStrut(8));
 
-        // Asientos
         StringBuilder seatsStr = new StringBuilder();
         asientos.forEach(a -> seatsStr.append(a.getLabel()).append("   "));
         boletoCard.add(filaInfo("Asiento(s)", seatsStr.toString().trim()));
@@ -504,7 +486,6 @@ public class PanelVender extends JPanel {
         boletoCard.add(sep2);
         boletoCard.add(Box.createVerticalStrut(14));
 
-        // --- Precios ---
         String tipoCliente = edad < 18 ? "Menor" : "Adulto";
         boletoCard.add(filaInfo("Tipo de cliente",     tipoCliente));
         boletoCard.add(Box.createVerticalStrut(6));
@@ -523,7 +504,6 @@ public class PanelVender extends JPanel {
 
         boletoCard.add(Box.createVerticalStrut(8));
 
-        // Total destacado
         JPanel totalPanel = new JPanel(new BorderLayout());
         totalPanel.setBackground(new Color(245, 235, 235));
         totalPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -549,8 +529,6 @@ public class PanelVender extends JPanel {
         panelBoleto.revalidate();
         panelBoleto.repaint();
     }
-
-    // ── Internal helpers ──────────────────────────────────────────────────────
 
     private JPanel filaInfo(String clave, String valor) {
         JPanel row = new JPanel(new BorderLayout(20, 0));

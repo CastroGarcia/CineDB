@@ -13,8 +13,7 @@ public class Client {
         email = "";
         id_membership = 0;
     }
-
-    // Constructor para registrar datos (incluye CURP)
+   
     public Client(String curp, String name, String age, String phone, String email,
             int idMembership) {
         setCurp(curp);
