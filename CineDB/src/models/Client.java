@@ -1,32 +1,23 @@
 package models;
 
 public class Client {
-    private int id, id_membership;
+    private String curp;
+    private int id_membership;
     private String name, age, phone, email;
-    
+
     public Client() {
-        id = 0;
+        curp = "";
         name = "";
-        age = "";
+        age  = "";
         phone = "";
         email = "";
         id_membership = 0;
     }
-    
-    // Constructor para registrar datos
-    public Client(String name, String age, String phone, String email, 
+
+    // Constructor para registrar datos (incluye CURP)
+    public Client(String curp, String name, String age, String phone, String email,
             int idMembership) {
-        setName(name);
-        setAge(age);
-        setPhone(phone);
-        setEmail(email);
-        setIdMembership(idMembership);
-    }
-    
-    // Constructor para recuperar datos
-    public Client(int id, String name, String age, String phone, String email, 
-            int idMembership) {
-        setId(id);
+        setCurp(curp);
         setName(name);
         setAge(age);
         setPhone(phone);
@@ -34,12 +25,12 @@ public class Client {
         setIdMembership(idMembership);
     }
 
-    public int getId() {
-        return id;
+    public String getCurp() {
+        return curp;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCurp(String curp) {
+        this.curp = curp == null ? "" : curp.toUpperCase().trim();
     }
 
     public String getName() {
@@ -72,7 +63,7 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
-    }                
+    }
 
     public int getIdMembership() {
         return id_membership;
@@ -81,5 +72,4 @@ public class Client {
     public void setIdMembership(int idMembership) {
         this.id_membership = idMembership;
     }
-    
 }

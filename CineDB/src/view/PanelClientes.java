@@ -12,14 +12,14 @@ public class PanelClientes extends JPanel {
     public JTable            tablaClientes, tablaBuscar;
     public JButton           btnCrear, btnLeer, btnActualizar, btnEliminar,
                              btnGuardar, btnCancelar, btnBuscar, btnRegresar;
-    public JTextField        txtNombre, txtEdad, txtTelefono, txtCorreo,
+    public JTextField        txtCurp, txtNombre, txtEdad, txtTelefono, txtCorreo,
                              txtIdMembership, txtBuscador;
     public CardLayout        card;
     public JLabel            lblTituloPanelAgregar;
-    public int               idEditando = -1;
+    public String            curpEditando = null; // null = modo registro
 
     private static final String[] COLS =
-        { "ID", "Nombre", "Edad", "Teléfono", "Correo", "ID Membresía" };
+        { "CURP", "Nombre", "Edad", "Teléfono", "Correo", "ID Membresía" };
 
     public PanelClientes() { initComponents(); }
 
@@ -42,7 +42,6 @@ public class PanelClientes extends JPanel {
 
         p.add(crearPanelHeader("Clientes"), BorderLayout.NORTH);
 
-        // Table
         dtmClientes = new DefaultTableModel(null, COLS) {
             public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -55,7 +54,6 @@ public class PanelClientes extends JPanel {
         bodyWrap.add(sp, BorderLayout.CENTER);
         p.add(bodyWrap, BorderLayout.CENTER);
 
-        // Action bar
         btnCrear      = Theme.primaryButton("+ Nuevo");
         btnLeer       = Theme.ghostButton("Buscar");
         btnActualizar = Theme.ghostButton("Editar");
@@ -72,14 +70,12 @@ public class PanelClientes extends JPanel {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(Theme.CONTENT_BG);
 
-        JPanel header = crearPanelHeader("Clientes");
-        root.add(header, BorderLayout.NORTH);
+        root.add(crearPanelHeader("Clientes"), BorderLayout.NORTH);
 
-        // Card
-        JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(Theme.SURFACE);
-        card.setBorder(BorderFactory.createCompoundBorder(
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setBackground(Theme.SURFACE);
+        cardPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Theme.BORDER, 1),
             BorderFactory.createEmptyBorder(24, 24, 24, 24)
         ));
@@ -87,28 +83,31 @@ public class PanelClientes extends JPanel {
         lblTituloPanelAgregar = Theme.sectionLabel("");
         lblTituloPanelAgregar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        txtCurp        = Theme.styledField("CURP (18 caracteres)", 30);
         txtNombre      = Theme.styledField("Nombre completo", 30);
         txtEdad        = Theme.styledField("Edad", 30);
         txtTelefono    = Theme.styledField("Teléfono", 30);
         txtCorreo      = Theme.styledField("Correo electrónico", 30);
         txtIdMembership= Theme.styledField("ID de membresía", 30);
 
-        card.add(lblTituloPanelAgregar);
-        card.add(Box.createVerticalStrut(20));
-        card.add(buildFieldRow("Nombre",        txtNombre));
-        card.add(Box.createVerticalStrut(10));
-        card.add(buildFieldRow("Edad",          txtEdad));
-        card.add(Box.createVerticalStrut(10));
-        card.add(buildFieldRow("Teléfono",      txtTelefono));
-        card.add(Box.createVerticalStrut(10));
-        card.add(buildFieldRow("Correo",        txtCorreo));
-        card.add(Box.createVerticalStrut(10));
-        card.add(buildFieldRow("ID Membresía",  txtIdMembership));
+        cardPanel.add(lblTituloPanelAgregar);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(buildFieldRow("CURP",         txtCurp));
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(buildFieldRow("Nombre",       txtNombre));
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(buildFieldRow("Edad",         txtEdad));
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(buildFieldRow("Teléfono",     txtTelefono));
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(buildFieldRow("Correo",       txtCorreo));
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(buildFieldRow("ID Membresía", txtIdMembership));
 
         JPanel scrollWrap = new JPanel(new BorderLayout());
         scrollWrap.setBackground(Theme.CONTENT_BG);
         scrollWrap.setBorder(BorderFactory.createEmptyBorder(16, 20, 0, 20));
-        scrollWrap.add(card, BorderLayout.NORTH);
+        scrollWrap.add(cardPanel, BorderLayout.NORTH);
         root.add(scrollWrap, BorderLayout.CENTER);
 
         btnGuardar  = Theme.primaryButton("Guardar");
@@ -124,7 +123,6 @@ public class PanelClientes extends JPanel {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Theme.CONTENT_BG);
 
-        // Header with search bar
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(Theme.SURFACE);
         top.setBorder(BorderFactory.createCompoundBorder(
@@ -137,7 +135,7 @@ public class PanelClientes extends JPanel {
         searchRow.setBackground(Theme.SURFACE);
         searchRow.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        txtBuscador = Theme.styledField("Buscar por ID de cliente", 30);
+        txtBuscador = Theme.styledField("Buscar por CURP", 30);
         btnBuscar   = Theme.primaryButton("Buscar");
 
         searchRow.add(txtBuscador, BorderLayout.CENTER);
@@ -162,14 +160,22 @@ public class PanelClientes extends JPanel {
     // ── Modes ─────────────────────────────────────────────────────────────────
 
     public void activarModoRegistro() {
-        idEditando = -1;
+        curpEditando = null;
+        txtCurp.setEditable(true);
+        txtCurp.setBackground(Theme.SURFACE_ALT);
         lblTituloPanelAgregar.setText("Registrar cliente");
         card.show(this, "REGISTRAR");
     }
 
-    public void activarModoEdicion(int id, String nombre, String edad,
+    public void activarModoEdicion(String curp, String nombre, String edad,
                                    String telefono, String correo, int id_mem) {
-        idEditando = id;
+        curpEditando = curp;
+        // CURP no se puede cambiar en edición
+        txtCurp.setText(curp);
+        txtCurp.setForeground(Theme.TEXT_MUTED);
+        txtCurp.setEditable(false);
+        txtCurp.setBackground(new Color(240, 240, 245));
+
         txtNombre.setText(nombre);       txtNombre.setForeground(Theme.TEXT_PRIMARY);
         txtEdad.setText(edad);           txtEdad.setForeground(Theme.TEXT_PRIMARY);
         txtTelefono.setText(telefono);   txtTelefono.setForeground(Theme.TEXT_PRIMARY);
@@ -180,10 +186,10 @@ public class PanelClientes extends JPanel {
         card.show(this, "REGISTRAR");
     }
 
-    public boolean esModoEdicion() { return idEditando != -1; }
+    public boolean esModoEdicion() { return curpEditando != null; }
 
     public void cancelarAccion() {
-        idEditando = -1;
+        curpEditando = null;
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
     }
@@ -193,8 +199,11 @@ public class PanelClientes extends JPanel {
     public Client getFormData() {
         try {
             return new Client(
-                txtNombre.getText(), txtEdad.getText(),
-                txtTelefono.getText(), txtCorreo.getText(),
+                txtCurp.getText(),
+                txtNombre.getText(),
+                txtEdad.getText(),
+                txtTelefono.getText(),
+                txtCorreo.getText(),
                 Integer.parseInt(txtIdMembership.getText())
             );
         } catch (NumberFormatException e) {
@@ -203,6 +212,9 @@ public class PanelClientes extends JPanel {
     }
 
     public void limpiarFormulario() {
+        resetField(txtCurp,         "CURP (18 caracteres)");
+        txtCurp.setEditable(true);
+        txtCurp.setBackground(Theme.SURFACE_ALT);
         resetField(txtNombre,       "Nombre completo");
         resetField(txtEdad,         "Edad");
         resetField(txtTelefono,     "Teléfono");
@@ -246,8 +258,7 @@ public class PanelClientes extends JPanel {
         t.setFont(Theme.FONT_BODY);
         t.setRowHeight(34);
         t.setBackground(Theme.SURFACE);
-        t.setSelectionBackground(new Color(147, 197, 253, 120));;//
-        t.setSelectionForeground(Color.WHITE);
+        t.setSelectionBackground(new Color(147, 197, 253, 120));
         t.setSelectionForeground(Theme.TEXT_PRIMARY);
         t.setGridColor(Theme.BORDER_LIGHT);
         t.setShowVerticalLines(false);
