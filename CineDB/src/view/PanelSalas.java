@@ -1,9 +1,24 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import models.Sala;
 
 public class PanelSalas extends JPanel {
@@ -39,9 +54,7 @@ public class PanelSalas extends JPanel {
         add(crearPanelBuscar(),    "BUSCAR");
         add(panelAsientos,         "ASIENTOS");
         card.show(this, "PRINCIPAL");
-    }
-
-    // ── Principal ─────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
@@ -61,8 +74,7 @@ public class PanelSalas extends JPanel {
         };
         tablaSalas = PanelClientes.estilizarTabla(new JTable(dtmSalas));
         Theme.centerTable(tablaSalas);
-
-        // Badge renderer for "Disponible" column
+        
         tablaSalas.getColumnModel().getColumn(2).setCellRenderer( new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(
@@ -70,8 +82,7 @@ public class PanelSalas extends JPanel {
                 boolean isSelected, boolean hasFocus,
             int row, int column) {
                 JLabel l = (JLabel) super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column);
-
-                // Evitar null
+                
                 boolean disp = false;
 
                 if (value != null) {
@@ -124,9 +135,7 @@ public class PanelSalas extends JPanel {
         barra.add(btnCrear);
         p.add(barra, BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Formulario ────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearPanelAgregar() {
         JPanel root = new JPanel(new BorderLayout());
@@ -186,9 +195,7 @@ public class PanelSalas extends JPanel {
         barra.add(btnGuardar);
         root.add(barra, BorderLayout.SOUTH);
         return root;
-    }
-
-    // ── Buscar ────────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearPanelBuscar() {
         JPanel p = new JPanel(new BorderLayout());
@@ -226,9 +233,7 @@ public class PanelSalas extends JPanel {
         barra.add(btnRegresar);
         p.add(barra, BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Modes ─────────────────────────────────────────────────────────────────
+    }    
 
     public void activarModoRegistro() {
         numSalaEditando = -1;
@@ -252,9 +257,7 @@ public class PanelSalas extends JPanel {
         numSalaEditando = -1;
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
-    }
-
-    // ── Form data ─────────────────────────────────────────────────────────────
+    }    
 
     public Sala getFormData() {
         int numSala = 0;
@@ -268,9 +271,7 @@ public class PanelSalas extends JPanel {
         txtNumSala.setForeground(Theme.TEXT_MUTED);
         txtNumSala.setBackground(Theme.SURFACE_ALT);
         chkDisponible.setSelected(true);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    }    
 
     private JPanel fieldRow(String label, JTextField f) {
         JPanel r = new JPanel(new BorderLayout(0, 4));

@@ -1,9 +1,19 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import models.Movie;
 
 public class PanelPeliculas extends JPanel {
@@ -32,9 +42,7 @@ public class PanelPeliculas extends JPanel {
         add(crearPanelAgregar(),   "REGISTRAR");
         add(crearPanelBuscar(),    "BUSCAR");
         card.show(this, "PRINCIPAL");
-    }
-
-    // ── Principal ─────────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
@@ -60,9 +68,7 @@ public class PanelPeliculas extends JPanel {
         btnEliminar   = Theme.dangerButton("Eliminar");
         p.add(crearBarra(btnCrear, btnLeer, btnActualizar, btnEliminar), BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Formulario ────────────────────────────────────────────────────────────
+    }    
 
     private JPanel crearPanelAgregar() {
         JPanel root = new JPanel(new BorderLayout());
@@ -108,9 +114,7 @@ public class PanelPeliculas extends JPanel {
         btnCancelar = Theme.ghostButton("Cancelar");
         root.add(crearBarra(btnGuardar, btnCancelar), BorderLayout.SOUTH);
         return root;
-    }
-
-    // ── Buscar ────────────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelBuscar() {
         JPanel p = new JPanel(new BorderLayout());
@@ -144,9 +148,7 @@ public class PanelPeliculas extends JPanel {
         btnRegresar = Theme.ghostButton("← Regresar");
         p.add(crearBarra(btnRegresar), BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Modes ─────────────────────────────────────────────────────────────────
+    }    
 
     public void activarModoRegistro() {
         idEditando = -1;
@@ -172,9 +174,7 @@ public class PanelPeliculas extends JPanel {
         idEditando = -1;
         limpiarFormulario();
         card.show(this, "PRINCIPAL");
-    }
-
-    // ── Form data ─────────────────────────────────────────────────────────────
+    }    
 
     public Movie getFormData() {
         return new Movie(
@@ -189,9 +189,7 @@ public class PanelPeliculas extends JPanel {
         reset(txtDuracion, "hh:mm:ss");
         reset(txtFormato,  ".mkv, .mp4 ...");
         reset(txtIdioma,   "Español, Inglés ...");
-    }
-
-    // ── Private helpers ───────────────────────────────────────────────────────
+    }    
 
     private JPanel crearHeader(String titulo) {
         JPanel p = new JPanel(new BorderLayout());

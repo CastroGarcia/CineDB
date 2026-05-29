@@ -19,8 +19,6 @@ public class ControladorFunciones {
     private final PanelFunciones view;
     private final Connection conn;
 
-    // Holds the schedule calculated in the preview step,
-    // ready to be saved if the user confirms
     private final List<Funcion> funcionesPendientes = new ArrayList<>();
 
     public ControladorFunciones(Connection conn, PanelFunciones view) {
@@ -29,10 +27,7 @@ public class ControladorFunciones {
         initController();
         cargarTodo();
     }
-
-    // ------------------------------------------------------------------ //
-    //  Wiring                                                              //
-    // ------------------------------------------------------------------ //
+    
     private void initController() {
         view.btnNueva.addActionListener(e -> abrirFormulario());
         view.btnEliminar.addActionListener(e -> eliminarFuncion());
@@ -45,18 +40,13 @@ public class ControladorFunciones {
         });
     }
 
-    // ------------------------------------------------------------------ //
-    //  Open form                                                           //
-    // ------------------------------------------------------------------ //
     private void abrirFormulario() {
         funcionesPendientes.clear();
         view.dtmPreview.setRowCount(0);
 
-        // Load movies into combo
         MovieDAO movieDAO = new MovieDAO(conn, new Movie());
         view.cargarPeliculas(movieDAO.getAllMovies());
 
-        // Load salas into combo
         SalaDAO salaDAO = new SalaDAO(conn, new Sala());
         List<Integer> numeros = new ArrayList<>();
         for (Sala s : salaDAO.getAllSalas()) {
@@ -67,20 +57,14 @@ public class ControladorFunciones {
         view.irANueva();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Schedule generation                                                 //
-    // ------------------------------------------------------------------ //
-    /**
-     * Parses hh:mm:ss or h:mm:ss duration string and returns total minutes.
-     */
     private int parseDurationMinutes(String duracion) {
         try {
             String[] parts = duracion.trim().split(":");
             int hours   = Integer.parseInt(parts[0]);
             int minutes = Integer.parseInt(parts[1]);
-            // seconds ignored for scheduling purposes
             return hours * 60 + minutes;
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
     }
@@ -110,7 +94,7 @@ public class ControladorFunciones {
             return;
         }
 
-        int BUFFER_MIN = 15; // cleanup/ads time between showings
+        int BUFFER_MIN = 15;
         LocalTime CIERRE = LocalTime.of(23, 59);
 
         funcionesPendientes.clear();
@@ -119,7 +103,6 @@ public class ControladorFunciones {
         LocalTime current = inicio;
         while (true) {
             LocalTime fin = current.plusMinutes(duracionMin);
-            // Stop if the showing would end after midnight or past closing time
             if (fin.isBefore(current) || fin.isAfter(CIERRE)) break;
 
             Funcion f = new Funcion(0, movie.getId(), movie.getName(), numSala, current, fin);
@@ -134,7 +117,6 @@ public class ControladorFunciones {
             });
 
             current = fin.plusMinutes(BUFFER_MIN);
-            // Overflow past midnight
             if (current.isBefore(fin)) break;
         }
 

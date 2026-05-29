@@ -1,11 +1,24 @@
 package view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import models.Asiento;
 import models.Asiento.Estado;
 
@@ -21,12 +34,10 @@ public class PanelAsientos extends JPanel {
     public JButton btnRegresar;
     public JButton btnGuardar;
     public JLabel lblTituloSala;
-
-    // Maps asiento id -> button, and button -> asiento
+    
     private final Map<Integer, JButton> buttonMap = new HashMap<>();
     private final Map<JButton, Asiento> asientoMap = new HashMap<>();
 
-    // Legend labels
     private JLabel lblDisponible, lblRoto, lblMantenimiento;
 
     private JPanel gridPanel;

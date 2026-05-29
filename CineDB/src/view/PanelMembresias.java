@@ -1,8 +1,17 @@
 package view;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 public class PanelMembresias extends JPanel {
 
@@ -25,8 +34,7 @@ public class PanelMembresias extends JPanel {
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Theme.CONTENT_BG);
-
-        // Header
+        
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Theme.SURFACE);
         header.setBorder(BorderFactory.createCompoundBorder(
@@ -39,15 +47,13 @@ public class PanelMembresias extends JPanel {
         sub.setForeground(Theme.TEXT_SECONDARY);
         header.add(sub, BorderLayout.SOUTH);
         p.add(header, BorderLayout.NORTH);
-
-        // Table
+        
         dtmMembresias = new DefaultTableModel(null, COLS) {
             public boolean isCellEditable(int r, int c) { return false; }
         };
         tablaMembresias = PanelClientes.estilizarTabla(new JTable(dtmMembresias));
         Theme.centerTable(tablaMembresias);
-
-        // Custom renderer for the membership badge column
+        
         tablaMembresias.getColumnModel().getColumn(1).setCellRenderer(
             new DefaultTableCellRenderer() {
                 @Override
@@ -84,8 +90,7 @@ public class PanelMembresias extends JPanel {
         JPanel body = new JPanel(new BorderLayout());
         body.setBackground(Theme.CONTENT_BG);
         body.setBorder(BorderFactory.createEmptyBorder(16, 20, 20, 20));
-
-        // Info card at top
+        
         JPanel infoCard = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 12));
         infoCard.setBackground(new Color(230, 245, 255));
         infoCard.setBorder(BorderFactory.createCompoundBorder(

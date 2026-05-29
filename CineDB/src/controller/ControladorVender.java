@@ -16,14 +16,13 @@ import view.PanelVender;
 public class ControladorVender {
 
     private final PanelVender view;
-    private final Connection  conn;
-
-    // Estado de la venta en curso
-    private int     edadCliente      = 0;
-    private boolean tieneMembership  = false;
-    private String  nombreCliente    = "";
-    private Movie   peliculaSeleccionada = null;
-    private Funcion funcionSeleccionada  = null;
+    private final Connection conn;
+    
+    private int edadCliente = 0;
+    private boolean tieneMembership = false;
+    private String nombreCliente = "";
+    private Movie peliculaSeleccionada = null;
+    private Funcion funcionSeleccionada = null;
 
     public ControladorVender(Connection conn, PanelVender view) {
         this.conn = conn;
@@ -32,8 +31,7 @@ public class ControladorVender {
     }
 
     private void initController() {
-
-        // ── Paso 1 ────────────────────────────────────────────────────────────
+        
         view.btnSi.addActionListener(e ->
             view.card.show(view, "PASO2_SI"));
 
@@ -42,7 +40,6 @@ public class ControladorVender {
             view.card.show(view, "PASO2_NO");
         });
 
-        // ── Paso 2a: buscar por CURP ──────────────────────────────────────────
         view.btnBuscarCliente.addActionListener(e -> buscarClientePorCurp());
         view.txtCurpVenta.addActionListener(e -> buscarClientePorCurp());
 
@@ -51,7 +48,6 @@ public class ControladorVender {
             view.card.show(view, "PASO1");
         });
 
-        // ── Paso 2b: edad manual ──────────────────────────────────────────────
         view.btnConfirmarEdad.addActionListener(e -> confirmarEdadManual());
         view.txtEdadVenta.addActionListener(e -> confirmarEdadManual());
 
@@ -60,29 +56,23 @@ public class ControladorVender {
             view.card.show(view, "PASO1");
         });
 
-        // ── Paso 3: seleccionar película ──────────────────────────────────────
         view.btnSeleccionarPelicula.addActionListener(e -> seleccionarPelicula());
 
         view.btnVolverPelicula.addActionListener(e ->
             view.card.show(view, tieneMembership ? "PASO2_SI" : "PASO2_NO"));
 
-        // ── Paso 4: seleccionar función ───────────────────────────────────────
         view.btnSeleccionarFuncion.addActionListener(e -> seleccionarFuncion());
 
         view.btnVolverFuncion.addActionListener(e ->
             view.card.show(view, "PASO3"));
 
-        // ── Paso 5: confirmar asientos ────────────────────────────────────────
         view.btnConfirmarAsientos.addActionListener(e -> confirmarAsientos());
 
         view.btnVolverAsientos.addActionListener(e ->
             view.card.show(view, "PASO4"));
-
-        // ── Paso 6: nueva venta ───────────────────────────────────────────────
+        
         view.btnNuevaVenta.addActionListener(e -> resetVenta());
-    }
-
-    // ── Lógica de cada paso ───────────────────────────────────────────────────
+    }    
 
     private void buscarClientePorCurp() {
         String curp = view.txtCurpVenta.getText().trim().toUpperCase();
@@ -107,8 +97,7 @@ public class ControladorVender {
             }
             return;
         }
-
-        // Extraer datos del cliente
+        
         try {
             edadCliente = Integer.parseInt(client.getAge().trim());
         } catch (NumberFormatException ex) {
@@ -125,7 +114,7 @@ public class ControladorVender {
 
         String tipoCliente = edadCliente < 18 ? "Menor" : "Adulto";
         String memInfo     = tieneMembership
-            ? "✔ Membresía activa — 20% de descuento aplicado"
+            ? "Membresía activa — 20% de descuento aplicado"
             : "Sin membresía";
 
         JOptionPane.showMessageDialog(view,
@@ -193,8 +182,7 @@ public class ControladorVender {
         int idFuncion = (int) view.dtmFunciones.getValueAt(fila, 0);
         int numSala   = Integer.parseInt(
             view.dtmFunciones.getValueAt(fila, 2).toString().replace("Sala ", "").trim());
-
-        // Buscamos el objeto Funcion completo desde la lista cargada
+        
         FuncionDAO fdao = new FuncionDAO(conn);
         List<Funcion> funciones = fdao.getFuncionesByPelicula(peliculaSeleccionada.getId());
         funcionSeleccionada = funciones.stream()
@@ -223,7 +211,6 @@ public class ControladorVender {
             return;
         }
 
-        // Mostrar boleto
         view.mostrarBoleto(
             peliculaSeleccionada.getName(),
             funcionSeleccionada.getNumSala(),
@@ -236,8 +223,6 @@ public class ControladorVender {
 
         view.card.show(view, "PASO6");
     }
-
-    // ── Carga de datos ────────────────────────────────────────────────────────
 
     private void cargarPeliculas() {
         view.dtmPeliculas.setRowCount(0);
@@ -278,9 +263,7 @@ public class ControladorVender {
         AsientoDAO dao = new AsientoDAO(conn);
         List<Asiento> asientos = dao.getAsientosBySala(numSala);
         view.cargarGridAsientos(asientos);
-    }
-
-    // ── Reset ─────────────────────────────────────────────────────────────────
+    }   
 
     private void resetEstado() {
         edadCliente         = 0;

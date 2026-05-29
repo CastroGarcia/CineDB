@@ -19,8 +19,7 @@ public class UserDAO {
     
     public int registerUser() {
         if(findUser()) return 1; //Usuario ya registrado
-        
-        // Hashea la contraseña (el "10" es el factor de costo)
+                
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
         
         String sql = "INSERT INTO usuario (NombreUsuario, Contraseña) VALUES (?, ?)";
@@ -40,8 +39,7 @@ public class UserDAO {
         }
     }
     
-    public boolean findUser() {        
-        // Solo busca por username, trae el hash guardado
+    public boolean findUser() {                
         String sql = "SELECT Contraseña FROM usuario WHERE NombreUsuario = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -51,8 +49,7 @@ public class UserDAO {
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()) {
-                String hashGuardado = rs.getString("Contraseña");
-                // Compara la contraseña escrita contra el hash guardado
+                String hashGuardado = rs.getString("Contraseña");                
                 return BCrypt.checkpw(password, hashGuardado);
             }
 

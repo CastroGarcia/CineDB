@@ -1,11 +1,26 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 import models.Funcion;
 import models.Movie;
 
@@ -34,9 +49,7 @@ public class PanelFunciones extends JPanel {
         add(crearPanelPrincipal(), "PRINCIPAL");
         add(crearPanelNueva(),     "NUEVA");
         card.show(this, "PRINCIPAL");
-    }
-
-    // ── Principal ─────────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelPrincipal() {
         JPanel p = new JPanel(new BorderLayout());
@@ -73,15 +86,12 @@ public class PanelFunciones extends JPanel {
         barra.add(btnNueva);
         p.add(barra, BorderLayout.SOUTH);
         return p;
-    }
-
-    // ── Nueva función ─────────────────────────────────────────────────────────
+    }   
 
     private JPanel crearPanelNueva() {
         JPanel p = new JPanel(new BorderLayout(0, 0));
         p.setBackground(Theme.CONTENT_BG);
-
-        // Header
+        
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Theme.SURFACE);
         header.setBorder(BorderFactory.createCompoundBorder(
@@ -91,13 +101,11 @@ public class PanelFunciones extends JPanel {
         header.add(Theme.titleLabel("Nueva función"), BorderLayout.WEST);
         p.add(header, BorderLayout.NORTH);
 
-        // Scrollable content
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(Theme.CONTENT_BG);
         content.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
-        // Form card
         JPanel formCard = new JPanel(new GridBagLayout());
         formCard.setBackground(Theme.SURFACE);
         formCard.setBorder(BorderFactory.createCompoundBorder(
@@ -111,14 +119,12 @@ public class PanelFunciones extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 12, 12);
 
-        // Row 1 labels
         gbc.gridy = 0; gbc.weightx = 1;
         gbc.gridx = 0; formCard.add(Theme.fieldLabel("Película"), gbc);
         gbc.gridx = 1; formCard.add(Theme.fieldLabel("Sala"), gbc);
         gbc.gridx = 2; gbc.insets = new Insets(0, 0, 12, 0);
         formCard.add(Theme.fieldLabel("Hora de inicio (HH:mm)"), gbc);
 
-        // Row 2 fields
         cmbPelicula   = new JComboBox<>();
         cmbSala       = new JComboBox<>();
         txtHoraInicio = new JTextField("08:00", 8);
@@ -132,7 +138,6 @@ public class PanelFunciones extends JPanel {
         gbc.gridx = 2; gbc.insets = new Insets(4, 0, 0, 0);
         formCard.add(txtHoraInicio, gbc);
 
-        // Calc button
         gbc.gridy = 2; gbc.gridx = 0; gbc.gridwidth = 3;
         gbc.insets = new Insets(16, 0, 0, 0);
         btnGenerarPreview = Theme.ghostButton("Calcular horario →");
@@ -141,7 +146,6 @@ public class PanelFunciones extends JPanel {
         content.add(formCard);
         content.add(Box.createVerticalStrut(16));
 
-        // Preview card
         JPanel previewCard = new JPanel(new BorderLayout(0, 8));
         previewCard.setBackground(Theme.SURFACE);
         previewCard.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -180,7 +184,6 @@ public class PanelFunciones extends JPanel {
         scrollContent.getViewport().setBackground(Theme.CONTENT_BG);
         p.add(scrollContent, BorderLayout.CENTER);
 
-        // Footer
         btnGuardar      = Theme.primaryButton("Guardar función");
         btnCancelarForm = Theme.ghostButton("Cancelar");
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
@@ -192,9 +195,7 @@ public class PanelFunciones extends JPanel {
 
         return p;
     }
-
-    // ── Public API ────────────────────────────────────────────────────────────
-
+    
     public void cargarPeliculas(List<Movie> movies) {
         cmbPelicula.removeAllItems();
         for (Movie m : movies) cmbPelicula.addItem(new MovieItem(m));
@@ -228,10 +229,12 @@ public class PanelFunciones extends JPanel {
         return sel == null ? -1 : (int) sel;
     }
 
-    public void irAPrincipal() { card.show(this, "PRINCIPAL"); }
-    public void irANueva()     { dtmPreview.setRowCount(0); card.show(this, "NUEVA"); }
-
-    // ── Styling helpers ───────────────────────────────────────────────────────
+    public void irAPrincipal() {
+        card.show(this, "PRINCIPAL"); 
+    }
+    public void irANueva() {
+        dtmPreview.setRowCount(0); card.show(this, "NUEVA"); 
+    }
 
     private void styleCombo(JComboBox<?> c) {
         c.setFont(Theme.FONT_BODY);
@@ -245,9 +248,7 @@ public class PanelFunciones extends JPanel {
         f.setBackground(Theme.SURFACE_ALT);
         f.setBorder(Theme.fieldBorder());
         f.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-    }
-
-    // ── Inner class ───────────────────────────────────────────────────────────
+    }    
 
     public static class MovieItem {
         public final Movie movie;

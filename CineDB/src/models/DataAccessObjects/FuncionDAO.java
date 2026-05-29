@@ -98,8 +98,7 @@ public class FuncionDAO {
         }
         return lista;
     }
-
-    /** Devuelve todas las funciones programadas para una película específica. */
+    
     public List<Funcion> getFuncionesByPelicula(int idPelicula) {
         List<Funcion> lista = new ArrayList<>();
         String sql = """

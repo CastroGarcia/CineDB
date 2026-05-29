@@ -3,7 +3,7 @@ package app;
 import controller.ControladorLogin;
 import javax.swing.SwingUtilities;
 import view.VentanaLogin;
-// probando provbando
+
 public class Main {
     
     public static void main(String[] args) {
